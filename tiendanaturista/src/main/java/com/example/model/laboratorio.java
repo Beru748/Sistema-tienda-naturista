@@ -34,4 +34,10 @@ public class laboratorio {
     public void setTelefono(String telefono){
         this.telefono=telefono;
     }
+
+    @Override
+    public String toString(){
+        return "ID Laboratorio: "+idLaboratorio+"Nombre: "+nombre+"Telefono: "+telefono;
+
+    }
 }
