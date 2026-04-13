@@ -57,6 +57,12 @@ public class detalleVenta {
     public void setSubTotal(double subTotal){
         this.subTotal=subTotal;
     }
+
+    @Override
+    public String toString(){
+        return "ID Detalle: "+idDetalle+"ID Venta: "+idVenta+"ID Producto: "+idProducto+
+        "Valor por Unidad: "+precioUnitario+"Subtotal: "+subTotal;
+    }
     
 
 }
