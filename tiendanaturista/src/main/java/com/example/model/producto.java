@@ -96,4 +96,12 @@ public class producto {
         this.idLaboratorio=idLaboratorio;
     }
 
+    @Override
+    public String toString(){
+        return "Codigo Producto: "+idProducto+"Codigo de Barras: "+codigoBarras+"Nombre: "+nombre+
+        "Descripcion: "+descripcion+"Precio: "+precio+"Stock: "+stock+"Unidad de Medida: "+unidadMedida+
+        "Fecha de Vencimiento: "+fechaVencimiento+"Estado: "+activo+"ID Categoria: "+idCategoria+
+        "ID Laboratorio: "+idLaboratorio;
+    }
+
 }
