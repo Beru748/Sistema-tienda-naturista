@@ -35,4 +35,10 @@ public class categoria {
         this.descripcion=descripcion;
     }
 
+    @Override
+    public String toString(){
+        return "ID Categoria: " +idCategoria + "Nombre: " + nombre +
+        "Descripcion: "+ descripcion;
+    }
+
 }
