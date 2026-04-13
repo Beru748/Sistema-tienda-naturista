@@ -41,4 +41,10 @@ public class cliente {
         this.telefono=telefono;
     }
 
+    @Override
+    public String toString(){
+        return "ID cliente: "+idCliente+"Cedula: "+cedula+"Nombre: "+nombre
+        +"Telefono: "+telefono;
+    }
+
 }
