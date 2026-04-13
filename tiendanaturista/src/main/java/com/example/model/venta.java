@@ -35,6 +35,27 @@ public class venta {
     public void setTotal(double total){
         this.total=total;
     }
+
+    public String getMetodoPago(){
+        return metodoPago;
+    }
+    public void setMetodoPago(String metodoPago){
+        this.metodoPago=metodoPago;
+    }
+
+
+    public int getIdCliente(){
+        return idCliente;
+    }
+    public void setIdCliente(int idCliente){
+        this.idCliente=idCliente;
+    }
+
+    @Override
+    public String toString(){
+        return "ID Venta: "+idVenta+"Fecha y Hora de la Venta: "+fechaHora+
+        "Total de la Venta: "+total+"Metodo de Pago: "+metodoPago+"ID Cliente: "+idCliente;
+    }
     
 
 
