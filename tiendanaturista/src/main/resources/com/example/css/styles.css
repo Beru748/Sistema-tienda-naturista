@@ -1,0 +1,24 @@
+/* Color de fondo para la ventana principal */
+.root {
+    -fx-background-color: #FCFAF7;
+}
+
+/* Estilo para los textos normales */
+.label {
+    -fx-text-fill: #231F20;
+    -fx-font-family: "Segoe UI"; /* Letra limpia y moderna */
+}
+
+/* Estilo para el botón principal verde */
+.boton-principal {
+    -fx-background-color: #0CC053;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px; /* Bordes redondeados modernos */
+    -fx-cursor: hand;
+}
+
+/* Efecto al pasar el mouse por el botón verde (un poco más oscuro) */
+.boton-principal:hover {
+    -fx-background-color: #0A9E44; 
+}
