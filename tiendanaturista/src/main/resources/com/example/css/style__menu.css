@@ -1,0 +1,48 @@
+/* 
+styles.css — Natural & Belleza POS
+
+/* ── Botón de menú lateral (estado normal) ── */
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #4a6e42;
+    -fx-font-family: "Arial";
+    -fx-font-size: 13px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 10 16 10 16;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+/* ── Hover ── */
+.menu-button:hover {
+    -fx-background-color: #EAF4E6;
+    -fx-text-fill: #2d4a28;
+}
+
+/* ── Botón activo / presionado ── */
+.menu-button:pressed {
+    -fx-background-color: #D4ECCC;
+    -fx-text-fill: #1e3a1a;
+}
+
+/* ── Botón marcado como activo (via código: btn.getStyleClass().add("menu-button-active")) ── */
+.menu-button-active {
+    -fx-background-color: #EAF4E6;
+    -fx-text-fill: #2d4a28;
+    -fx-font-weight: bold;
+    -fx-border-color: #A8D5A2;
+    -fx-border-width: 0 0 0 3;
+    -fx-border-radius: 0 10 10 0;
+}
+
+/* ── Botón Salir (color diferente) ── */
+.menu-button-salir {
+    -fx-text-fill: #c0392b;
+}
+
+.menu-button-salir:hover {
+    -fx-background-color: #FDECEA;
+    -fx-text-fill: #a93226;
+}
