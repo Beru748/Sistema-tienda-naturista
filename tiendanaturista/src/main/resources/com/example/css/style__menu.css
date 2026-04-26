@@ -46,3 +46,140 @@ styles.css — Natural & Belleza POS
     -fx-background-color: #FDECEA;
     -fx-text-fill: #a93226;
 }
+
+/*=========================================================
+
+        CSS para la interfaz del inventario
+
+==========================================================*/
+
+/* ── Campos de filtro ── */
+.campo-filtro {
+    -fx-background-color: #F8F5F1;
+    -fx-border-color: #D4E8CC;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-family: "Arial";
+    -fx-font-size: 13px;
+    -fx-text-fill: #3a4a38;
+    -fx-prompt-text-fill: #B8C8B0;
+    -fx-padding: 0 12 0 12;
+}
+
+.campo-filtro:focused {
+    -fx-border-color: #7bc266;
+    -fx-background-color: #FFFFFF;
+}
+
+/* ── ComboBox de filtros ── */
+.combo-filtro {
+    -fx-background-color: #F8F5F1;
+    -fx-border-color: #D4E8CC;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-family: "Arial";
+    -fx-font-size: 13px;
+    -fx-text-fill: #3a4a38;
+}
+
+.combo-filtro:focused {
+    -fx-border-color: #7bc266;
+}
+
+/* ── Botón secundario (Limpiar filtros) ── */
+.boton-secundario {
+    -fx-background-color: #EDEAE5;
+    -fx-text-fill: #6A6058;
+    -fx-font-family: "Arial";
+    -fx-font-size: 12px;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-padding: 0 14 0 14;
+}
+
+.boton-secundario:hover {
+    -fx-background-color: #E0DDD8;
+    -fx-text-fill: #3A3830;
+}
+
+/* ── Columnas de tabla ── */
+.col-centrada {
+    -fx-alignment: CENTER;
+    -fx-font-family: "Arial";
+    -fx-font-size: 12px;
+}
+
+.col-izquierda {
+    -fx-alignment: CENTER_LEFT;
+    -fx-font-family: "Arial";
+    -fx-font-size: 12px;
+}
+
+.col-derecha {
+    -fx-alignment: CENTER_RIGHT;
+    -fx-font-family: "Arial";
+    -fx-font-size: 12px;
+}
+
+/* ── Botón acción verde (Añadir) ── */
+.boton-accion-verde {
+    -fx-background-color: #0CC053;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: "Arial";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-padding: 0 18 0 18;
+}
+
+.boton-accion-verde:hover {
+    -fx-background-color: #09a847;
+}
+
+.boton-accion-verde:pressed {
+    -fx-background-color: #07913d;
+}
+
+/* ── Botón acción oscuro (Editar) ── */
+.boton-accion-oscuro {
+    -fx-background-color: #3D5A80;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: "Arial";
+    -fx-font-size: 13px;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-padding: 0 18 0 18;
+}
+
+.boton-accion-oscuro:hover {
+    -fx-background-color: #304a6e;
+}
+
+.boton-accion-oscuro:pressed {
+    -fx-background-color: #243a58;
+}
+
+/* ── Botón acción peligro (Eliminar) ── */
+.boton-accion-peligro {
+    -fx-background-color: #FFF0ED;
+    -fx-text-fill: #C0392B;
+    -fx-font-family: "Arial";
+    -fx-font-size: 13px;
+    -fx-border-color: #F5C6C1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-padding: 0 18 0 18;
+}
+
+.boton-accion-peligro:hover {
+    -fx-background-color: #FAD7D3;
+    -fx-text-fill: #a93226;
+    -fx-border-color: #e8a09a;
+}
+
+.boton-accion-peligro:pressed {
+    -fx-background-color: #F5C6C1;
+}
+
