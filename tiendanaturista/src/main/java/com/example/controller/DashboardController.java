@@ -26,7 +26,6 @@ public class DashboardController {
         btnReportes.setOnAction(e  -> cargarVista("/com/example/view/Reportes.fxml",   btnReportes));
         btnSalirMenu.setOnAction(e     -> cerrarAplicacion());
 
-        cargarVista("/com/example/view/Ventas.fxml", btnCaja);
     }
 
     private void cargarVista(String rutaFxml, Button botonActivo) {
