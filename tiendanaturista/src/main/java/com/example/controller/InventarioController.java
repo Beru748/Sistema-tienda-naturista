@@ -7,6 +7,40 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+/**
+ * MOCK (Clase Falsa Temporal): 
+ * Cuando el Dev 1 termine su clase Producto oficial en la carpeta "model", 
+ * el Dev 2 solo tendrá que borrar esto de aquí e importar la verdadera.
+ */
+class Producto {
+    private int id;
+    private String nombre;
+    private String categoria;
+    private String laboratorio;
+    private int stock;
+    private double precio;
+    private String vencimiento;
+
+    public Producto(int id, String nombre, String categoria, String laboratorio, int stock, double precio, String vencimiento) {
+        this.id = id;
+        this.nombre = nombre;
+        this.categoria = categoria;
+        this.laboratorio = laboratorio;
+        this.stock = stock;
+        this.precio = precio;
+        this.vencimiento = vencimiento;
+    }
+
+    // Getters obligatorios para que el TableView pueda leer la información
+    public int getId() { return id; }
+    public String getNombre() { return nombre; }
+    public String getCategoria() { return categoria; }
+    public String getLaboratorio() { return laboratorio; }
+    public int getStock() { return stock; }
+    public double getPrecio() { return precio; }
+    public String getVencimiento() { return vencimiento; }
+}
+
 public class InventarioController {
 
     /* ── Filtros ── */
