@@ -1,43 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox
-    spacing="20.0"
-    style="-fx-background-color: transparent;"
-    xmlns="http://javafx.com/javafx/21"
-    xmlns:fx="http://javafx.com/fxml/1">
+<VBox spacing="20.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controller.ReportesController">
     <padding>
-        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0" />
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
     <children>
 
-        <!--  ENCABEZADO                                 -->
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
-                <Label text="📊"
-                    style="-fx-font-size: 20px;" />
+                <Label style="-fx-font-size: 20px;" text="📊" />
                 <VBox spacing="1.0">
                     <children>
-                        <Label text="Reportes e Historial"
-                            style="-fx-font-family: 'Georgia';
-                                    -fx-font-size: 20px;
-                                    -fx-font-style: italic;
-                                    -fx-text-fill: #2d4a28;" />
-                        <Label text="Consulta y analiza las ventas por periodo"
-                            style="-fx-font-family: 'Arial';
-                                    -fx-font-size: 10.5px;
-                                    -fx-text-fill: #A8B8A0;" />
+                        <Label style="-fx-font-family: 'Georgia';                                     -fx-font-size: 20px;                                     -fx-font-style: italic;                                     -fx-text-fill: #2d4a28;" text="Reportes e Historial" />
+                        <Label style="-fx-font-family: 'Arial';                                     -fx-font-size: 10.5px;                                     -fx-text-fill: #A8B8A0;" text="Consulta y analiza las ventas por periodo" />
                     </children>
                 </VBox>
             </children>
@@ -45,127 +32,45 @@
 
         <Separator style="-fx-background-color: #E0EDD9;" />
 
-        <!-- ═══════════════════════════════════════════ -->
-        <!--  SECCIÓN SUPERIOR — Filtros de fecha        -->
-        <!-- ═══════════════════════════════════════════ -->
-        <HBox
-            alignment="CENTER_LEFT"
-            spacing="15.0"
-            style="-fx-background-color: #FFFFFF;
-                -fx-background-radius: 10;
-                -fx-border-color: #E0EDD9;
-                -fx-border-radius: 10;
-                -fx-border-width: 1;">
+        <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-background-color: #FFFFFF;                 -fx-background-radius: 10;                 -fx-border-color: #E0EDD9;                 -fx-border-radius: 10;                 -fx-border-width: 1;">
             <padding>
-                <Insets top="14.0" right="20.0" bottom="14.0" left="20.0" />
+                <Insets bottom="14.0" left="20.0" right="20.0" top="14.0" />
             </padding>
             <children>
 
-                <Label text="📅"
-                    style="-fx-font-size: 14px; -fx-text-fill: #A8B8A0;" />
+                <Label style="-fx-font-size: 14px; -fx-text-fill: #A8B8A0;" text="📅" />
 
-                <!-- Desde -->
-                <Label text="Desde:"
-                    style="-fx-font-family: 'Arial';
-                            -fx-font-size: 13px;
-                            -fx-font-weight: bold;
-                            -fx-text-fill: #4a6e42;" />
-                <DatePicker
-                    fx:id="fechaDesde"
-                    prefHeight="36.0"
-                    prefWidth="155.0"
-                    promptText="dd/mm/aaaa"
-                    styleClass="date-picker-reporte" />
+                <Label style="-fx-font-family: 'Arial';                             -fx-font-size: 13px;                             -fx-font-weight: bold;                             -fx-text-fill: #4a6e42;" text="Desde:" />
+                <DatePicker fx:id="fechaDesde" prefHeight="36.0" prefWidth="155.0" promptText="dd/mm/aaaa" styleClass="date-picker-reporte" />
 
-                <Separator orientation="VERTICAL" prefHeight="24.0"
-                        style="-fx-background-color: #D4E8CC;" />
+                <Separator orientation="VERTICAL" prefHeight="24.0" style="-fx-background-color: #D4E8CC;" />
 
-                <!-- Hasta -->
-                <Label text="Hasta:"
-                    style="-fx-font-family: 'Arial';
-                            -fx-font-size: 13px;
-                            -fx-font-weight: bold;
-                            -fx-text-fill: #4a6e42;" />
-                <DatePicker
-                    fx:id="fechaHasta"
-                    prefHeight="36.0"
-                    prefWidth="155.0"
-                    promptText="dd/mm/aaaa"
-                    styleClass="date-picker-reporte" />
+                <Label style="-fx-font-family: 'Arial';                             -fx-font-size: 13px;                             -fx-font-weight: bold;                             -fx-text-fill: #4a6e42;" text="Hasta:" />
+                <DatePicker fx:id="fechaHasta" prefHeight="36.0" prefWidth="155.0" promptText="dd/mm/aaaa" styleClass="date-picker-reporte" />
 
-                <!-- Spacer -->
                 <Pane HBox.hgrow="ALWAYS" />
 
-                <!-- Botón Generar Reporte -->
-                <Button
-                    fx:id="btnGenerarReporte"
-                    text="📋  Generar Reporte"
-                    prefHeight="36.0"
-                    mnemonicParsing="false"
-                    style="-fx-background-color: #3a7a2e;
-                        -fx-text-fill: #FFFFFF;
-                        -fx-font-family: 'Arial';
-                        -fx-font-size: 13px;
-                        -fx-font-weight: bold;
-                        -fx-background-radius: 8;
-                        -fx-cursor: hand;
-                        -fx-padding: 0 18 0 18;" />
+                <Button fx:id="btnGenerarReporte" mnemonicParsing="false" prefHeight="36.0" style="-fx-background-color: #3a7a2e;                         -fx-text-fill: #FFFFFF;                         -fx-font-family: 'Arial';                         -fx-font-size: 13px;                         -fx-font-weight: bold;                         -fx-background-radius: 8;                         -fx-cursor: hand;                         -fx-padding: 0 18 0 18;" text="📋  Generar Reporte" />
 
             </children>
         </HBox>
 
-        <!--  SECCIÓN CENTRAL — Tabla de historial       -->
-        <TableView
-            fx:id="tablaReportes"
-            VBox.vgrow="ALWAYS"
-            style="-fx-background-color: #FFFFFF;
-                -fx-border-color: #E0EDD9;
-                -fx-border-radius: 10;
-                -fx-background-radius: 10;
-                -fx-table-cell-border-color: #F5F0EA;">
+        <TableView fx:id="tablaReportes" style="-fx-background-color: #FFFFFF;                 -fx-border-color: #E0EDD9;                 -fx-border-radius: 10;                 -fx-background-radius: 10;                 -fx-table-cell-border-color: #F5F0EA;" VBox.vgrow="ALWAYS">
             <columns>
+                <TableColumn fx:id="colNumFactura" prefWidth="160.0" style="-fx-alignment: CENTER;                         -fx-font-family: 'Arial';                         -fx-font-size: 12px;" text="N° Factura" />
 
-                <TableColumn
-                    fx:id="colNumFactura"
-                    text="N° Factura"
-                    prefWidth="160.0"
-                    style="-fx-alignment: CENTER;
-                        -fx-font-family: 'Arial';
-                        -fx-font-size: 12px;" />
+                <TableColumn fx:id="colFechaHora" prefWidth="260.0" style="-fx-alignment: CENTER;                         -fx-font-family: 'Arial';                         -fx-font-size: 12px;" text="Fecha y Hora" />
 
-                <TableColumn
-                    fx:id="colFechaHora"
-                    text="Fecha y Hora"
-                    prefWidth="260.0"
-                    style="-fx-alignment: CENTER;
-                        -fx-font-family: 'Arial';
-                        -fx-font-size: 12px;" />
-
-                <TableColumn
-                    fx:id="colTotalFactura"
-                    text="Total de la Factura"
-                    prefWidth="240.0"
-                    style="-fx-alignment: CENTER_RIGHT;
-                        -fx-font-family: 'Arial';
-                        -fx-font-size: 12px;" />
-
+                <TableColumn fx:id="colTotalFactura" prefWidth="240.0" style="-fx-alignment: CENTER_RIGHT;                         -fx-font-family: 'Arial';                         -fx-font-size: 12px;" text="Total de la Factura" />
             </columns>
             <placeholder>
                 <StackPane>
                     <children>
                         <VBox alignment="CENTER" spacing="10.0">
                             <children>
-                                <Label text="📋"
-                                    style="-fx-font-size: 36px;" />
-                                <Label text="No hay registros para el periodo seleccionado"
-                                    style="-fx-font-family: 'Georgia';
-                                            -fx-font-size: 14px;
-                                            -fx-font-style: italic;
-                                            -fx-text-fill: #B8C8B0;" />
-                                <Label text="Selecciona un rango de fechas y presiona Generar Reporte"
-                                    style="-fx-font-family: 'Arial';
-                                            -fx-font-size: 11px;
-                                            -fx-text-fill: #C8D4C0;" />
+                                <Label style="-fx-font-size: 36px;" text="📋" />
+                                <Label style="-fx-font-family: 'Georgia';                                             -fx-font-size: 14px;                                             -fx-font-style: italic;                                             -fx-text-fill: #B8C8B0;" text="No hay registros para el periodo seleccionado" />
+                                <Label style="-fx-font-family: 'Arial';                                             -fx-font-size: 11px;                                             -fx-text-fill: #C8D4C0;" text="Selecciona un rango de fechas y presiona Generar Reporte" />
                             </children>
                         </VBox>
                     </children>
@@ -173,76 +78,32 @@
             </placeholder>
         </TableView>
 
-        <!--  SECCIÓN INFERIOR — Panel de resumen        -->
         <HBox alignment="CENTER_RIGHT">
             <children>
-
-                <!-- Panel de resumen -->
-                <VBox
-                    alignment="CENTER_RIGHT"
-                    spacing="6.0"
-                    style="-fx-background-color: #E8F5E9;
-                        -fx-background-radius: 12;
-                        -fx-border-color: #C8E6C9;
-                        -fx-border-radius: 12;
-                        -fx-border-width: 1.5;">
+                <VBox alignment="CENTER_RIGHT" spacing="6.0" style="-fx-background-color: #E8F5E9;                         -fx-background-radius: 12;                         -fx-border-color: #C8E6C9;                         -fx-border-radius: 12;                         -fx-border-width: 1.5;">
                     <padding>
-                        <Insets top="18.0" right="28.0" bottom="18.0" left="28.0" />
+                        <Insets bottom="18.0" left="28.0" right="28.0" top="18.0" />
                     </padding>
                     <children>
-
-                        <!-- Etiqueta superior del panel -->
-                        <Label text="RESUMEN DEL PERIODO"
-                            style="-fx-font-family: 'Arial';
-                                    -fx-font-size: 10px;
-                                    -fx-font-weight: bold;
-                                    -fx-text-fill: #81A878;
-                                    -fx-letter-spacing: 2;" />
+                        <Label style="-fx-font-family: 'Arial';                                     -fx-font-size: 10px;                                     -fx-font-weight: bold;                                     -fx-text-fill: #81A878;" text="RESUMEN DEL PERIODO" />
 
                         <Separator style="-fx-background-color: #C8E6C9;" />
 
-                        <!-- Total vendido (label principal) -->
-                        <Label
-                            fx:id="labelTotalPeriodo"
-                            text="TOTAL VENDIDO EN EL PERIODO:  $0.00"
-                            style="-fx-font-family: 'Georgia';
-                                -fx-font-size: 24px;
-                                -fx-font-weight: bold;
-                                -fx-text-fill: #2d4a28;" />
+                        <Label fx:id="labelTotalPeriodo" style="-fx-font-family: 'Georgia';                                 -fx-font-size: 24px;                                 -fx-font-weight: bold;                                 -fx-text-fill: #2d4a28;" text="TOTAL VENDIDO EN EL PERIODO:  \$0.00" />
 
-                        <!-- Detalle: cantidad de facturas -->
                         <HBox alignment="CENTER_RIGHT" spacing="16.0">
                             <children>
-                                <Label text="Facturas emitidas:"
-                                    style="-fx-font-family: 'Arial';
-                                            -fx-font-size: 11px;
-                                            -fx-text-fill: #81A878;" />
-                                <Label fx:id="labelCantidadFacturas"
-                                    text="0"
-                                    style="-fx-font-family: 'Arial';
-                                            -fx-font-size: 11px;
-                                            -fx-font-weight: bold;
-                                            -fx-text-fill: #3a7a2e;" />
+                                <Label style="-fx-font-family: 'Arial';                                             -fx-font-size: 11px;                                             -fx-text-fill: #81A878;" text="Facturas emitidas:" />
+                                <Label fx:id="labelCantidadFacturas" style="-fx-font-family: 'Arial';                                             -fx-font-size: 11px;                                             -fx-font-weight: bold;                                             -fx-text-fill: #3a7a2e;" text="0" />
 
-                                <Separator orientation="VERTICAL" prefHeight="14.0"
-                                        style="-fx-background-color: #C8E6C9;" />
+                                <Separator orientation="VERTICAL" prefHeight="14.0" style="-fx-background-color: #C8E6C9;" />
 
-                                <Label text="Promedio por venta:"
-                                    style="-fx-font-family: 'Arial';
-                                            -fx-font-size: 11px;
-                                            -fx-text-fill: #81A878;" />
-                                <Label fx:id="labelPromedio"
-                                    text="$0.00"
-                                    style="-fx-font-family: 'Arial';
-                                            -fx-font-size: 11px;
-                                            -fx-font-weight: bold;
-                                            -fx-text-fill: #3a7a2e;" />
+                                <Label style="-fx-font-family: 'Arial';                                             -fx-font-size: 11px;                                             -fx-text-fill: #81A878;" text="Promedio por venta:" />
+                                <Label fx:id="labelPromedio" style="-fx-font-family: 'Arial';                                             -fx-font-size: 11px;                                             -fx-font-weight: bold;                                             -fx-text-fill: #3a7a2e;" text="\$0.00" />
                             </children>
                         </HBox>
-
                     </children>
                 </VBox>
-
             </children>
         </HBox>
 
