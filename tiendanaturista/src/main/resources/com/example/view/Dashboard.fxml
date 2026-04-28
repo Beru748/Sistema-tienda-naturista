@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
-<BorderPane prefHeight="620.0" prefWidth="960.0" style="-fx-background-color: #FCFAF7;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="620.0" prefWidth="960.0" style="-fx-background-color: #FCFAF7;" stylesheets="@../css/style__menu.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controller.DashboardController">
 
     <!--  LEFT — Menu lateral   -->
     <left>

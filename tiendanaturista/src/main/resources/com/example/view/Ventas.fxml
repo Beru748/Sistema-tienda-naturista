@@ -13,11 +13,9 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane style="-fx-background-color: transparent;" stylesheets="@../css/style__menu.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controller.VentasController">
 
-    <!-- ═══════════════════════════════════════════ -->
     <!--  TOP — Encabezado del módulo                -->
-    <!-- ═══════════════════════════════════════════ -->
     <top>
         <VBox style="-fx-background-color: transparent;">
             <children>
@@ -58,9 +56,7 @@
         </VBox>
     </top>
 
-    <!-- ═══════════════════════════════════════════ -->
     <!--  CENTER — Tabla de productos en venta       -->
-    <!-- ═══════════════════════════════════════════ -->
     <center>
         <VBox>
             <padding>
@@ -99,9 +95,7 @@
         </VBox>
     </center>
 
-    <!-- ═══════════════════════════════════════════ -->
     <!--  BOTTOM — Panel de cobro                    -->
-    <!-- ═══════════════════════════════════════════ -->
     <bottom>
         <VBox style="-fx-background-color: transparent;">
             <children>
