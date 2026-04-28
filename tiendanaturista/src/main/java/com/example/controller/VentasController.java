@@ -6,6 +6,30 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+/**
+ * MOCK (Clase Falsa Temporal): 
+ * Representa un producto que ya fue agregado al "carrito" de compras.
+ */
+class ProductoVenta {
+    private String nombre;
+    private int cantidad;
+    private double precioUnitario;
+    private double subtotal;
+
+    public ProductoVenta(String nombre, int cantidad, double precioUnitario) {
+        this.nombre = nombre;
+        this.cantidad = cantidad;
+        this.precioUnitario = precioUnitario;
+        this.subtotal = cantidad * precioUnitario;
+    }
+
+    // Getters necesarios para que el TableView funcione
+    public String getNombre() { return nombre; }
+    public int getCantidad() { return cantidad; }
+    public double getPrecioUnitario() { return precioUnitario; }
+    public double getSubtotal() { return subtotal; }
+}
+
 public class VentasController {
 
     /* ── Buscador ── */
