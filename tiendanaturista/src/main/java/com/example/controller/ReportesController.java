@@ -1,4 +1,4 @@
-package com.example.controller; // ¡Paquete oficial de tu proyecto!
+package com.example.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
