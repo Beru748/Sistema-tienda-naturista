@@ -87,4 +87,18 @@ public class clienteDAO {
         return null;
     }
 
+    //actualiza un cliente existente en el registro
+    public boolean actualizar(cliente cli){
+        String sql = "UPDATE cliente SET cedula=?, nombre=?, telefono=? WHERE id_cliente = ?";try(PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setString(1, cli.getCedula());
+            ps.setString(2, cli.getNombre());
+            ps.setString(3, cli.getTelefono());
+            ps.setInt(4, cli.getIdCliente());
+            return ps.executeUpdate() > 0;
+        }catch(SQLException e){
+            System.err.println("Error al actualizar cliente: "+ e.getMessage());
+            return false;
+        }
+    }
+
 }
