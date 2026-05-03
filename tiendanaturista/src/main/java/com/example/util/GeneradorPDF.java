@@ -1,40 +1,33 @@
 package com.example.util;
 
-import java.io.FileOutputStream;
-import java.time.format.DateTimeFormatter;
-
 import com.example.model.cliente;
 import com.example.model.detalleVenta;
 import com.example.model.venta;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
+
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.colors.DeviceRgb;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
+
+import java.io.FileNotFoundException;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class GeneradorPDF {
 
     // ── Colores de la tienda ──────────────────────────────────────────────
-    private static final BaseColor COLOR_VERDE        = new BaseColor(12, 192, 83);
-    private static final BaseColor COLOR_VERDE_OSCURO = new BaseColor(9, 148, 64);
-    private static final BaseColor COLOR_GRIS_CLARO   = new BaseColor(248, 245, 241);
-    private static final BaseColor COLOR_GRIS_TEXTO   = new BaseColor(35, 31, 32);
-    private static final BaseColor COLOR_BLANCO       = BaseColor.WHITE;
-
-    // ── Fuentes ───────────────────────────────────────────────────────────
-    private static final Font FUENTE_TITULO     = new Font(Font.FontFamily.HELVETICA, 22, Font.BOLD,   COLOR_VERDE_OSCURO);
-    private static final Font FUENTE_SUBTITULO  = new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL, COLOR_GRIS_TEXTO);
-    private static final Font FUENTE_SECCION    = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD,   COLOR_VERDE_OSCURO);
-    private static final Font FUENTE_NORMAL     = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL, COLOR_GRIS_TEXTO);
-    private static final Font FUENTE_NEGRITA    = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD,   COLOR_GRIS_TEXTO);
-    private static final Font FUENTE_ENCABEZADO = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD,   COLOR_BLANCO);
-    private static final Font FUENTE_TOTAL      = new Font(Font.FontFamily.HELVETICA, 13, Font.BOLD,   COLOR_BLANCO);
-    private static final Font FUENTE_PIE        = new Font(Font.FontFamily.HELVETICA,  9, Font.ITALIC, COLOR_GRIS_TEXTO);
+    private static final DeviceRgb COLOR_VERDE        = new DeviceRgb(12, 192, 83);
+    private static final DeviceRgb COLOR_VERDE_OSCURO = new DeviceRgb(9, 148, 64);
+    private static final DeviceRgb COLOR_GRIS_CLARO   = new DeviceRgb(248, 245, 241);
+    private static final DeviceRgb COLOR_GRIS_TEXTO   = new DeviceRgb(35, 31, 32);
 
     // ── Formato de fecha ──────────────────────────────────────────────────
     private static final DateTimeFormatter FORMATO_FECHA =
@@ -43,114 +36,143 @@ public class GeneradorPDF {
     // constructor privado — no se instancia
     private GeneradorPDF() {}
 
-    //metodo principal para generar la factura
-    public static void generarFactura(venta v, cliente cli, List<detalleVenta> detalles,String rutaArchivo) {
-        try {
-            Document documento = new Document(PageSize.A4, 40, 40, 40, 40);
-            PdfWriter writer = PdfWriter.getInstance(documento,
-                    new FileOutputStream(rutaArchivo));
+    // ── Método principal ──────────────────────────────────────────────────
 
-            documento.open();
+    /**
+     * Genera la factura en PDF con toda la información de la venta.
+     *
+     * @param v            objeto venta con los datos generales
+     * @param cli          objeto cliente con sus datos
+     * @param detalles     lista de productos comprados
+     * @param rutaArchivo  ruta donde se guarda el PDF
+     */
+    public static void generarFactura(venta v, cliente cli,
+                                      List<detalleVenta> detalles,
+                                      String rutaArchivo) {
+        try {
+            PdfWriter writer      = new PdfWriter(rutaArchivo);
+            PdfDocument pdfDoc    = new PdfDocument(writer);
+            Document documento    = new Document(pdfDoc);
+            documento.setMargins(40, 40, 40, 40);
 
             agregarEncabezado(documento);
-            agregarLineaSeparadora(documento, writer);
+            agregarSeparador(documento);
             agregarDatosFactura(documento, v, cli);
-            agregarLineaSeparadora(documento, writer);
+            agregarSeparador(documento);
             agregarTablaProductos(documento, detalles);
             agregarTotales(documento, v);
-            agregarPieDePagina(documento, writer);
+            agregarSeparador(documento);
+            agregarPieDePagina(documento);
 
             documento.close();
             System.out.println("Factura generada correctamente en: " + rutaArchivo);
 
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
             System.err.println("Error al generar PDF: " + e.getMessage());
         }
     }
 
-    private static void agregarEncabezado(Document doc) throws DocumentException {
+    // ── Secciones del PDF ─────────────────────────────────────────────────
+
+    private static void agregarEncabezado(Document doc) {
 
         // nombre de la tienda
-        Paragraph nombre = new Paragraph("🌿 Natural & Belleza", FUENTE_TITULO);
-        nombre.setAlignment(Element.ALIGN_CENTER);
-        nombre.setSpacingAfter(4);
+        Paragraph nombre = new Paragraph("🌿 Natural & Belleza")
+                .setFontSize(22)
+                .setBold()
+                .setFontColor(COLOR_VERDE_OSCURO)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginBottom(4);
         doc.add(nombre);
 
         // slogan
-        Paragraph slogan = new Paragraph("Tu tienda de productos naturales y de belleza", FUENTE_SUBTITULO);
-        slogan.setAlignment(Element.ALIGN_CENTER);
-        slogan.setSpacingAfter(4);
+        Paragraph slogan = new Paragraph("Tu tienda de productos naturales y de belleza")
+                .setFontSize(11)
+                .setFontColor(COLOR_GRIS_TEXTO)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginBottom(4);
         doc.add(slogan);
 
-        // info de contacto
-        Paragraph contacto = new Paragraph("Valledupar, Cesar  |  Tel: 605-123-4567  |  naturalbelleza@email.com", FUENTE_SUBTITULO);
-        contacto.setAlignment(Element.ALIGN_CENTER);
-        contacto.setSpacingAfter(10);
+        // contacto
+        Paragraph contacto = new Paragraph(
+                "Valledupar, Cesar  |  Tel: 605-123-4567  |  naturalbelleza@email.com")
+                .setFontSize(10)
+                .setFontColor(COLOR_GRIS_TEXTO)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginBottom(10);
         doc.add(contacto);
     }
 
-    private static void agregarLineaSeparadora(Document doc, PdfWriter writer)
-            throws DocumentException {
-        PdfContentByte cb = writer.getDirectContent();
-        cb.setColorStroke(COLOR_VERDE);
-        cb.setLineWidth(1.5f);
-        cb.moveTo(doc.leftMargin(), writer.getVerticalPosition(false));
-        cb.lineTo(doc.right(), writer.getVerticalPosition(false));
-        cb.stroke();
-        doc.add(new Paragraph(" "));
+    private static void agregarSeparador(Document doc) {
+        Table separador = new Table(UnitValue.createPercentArray(new float[]{1}))
+                .useAllAvailableWidth()
+                .setMarginBottom(8)
+                .setMarginTop(4);
+
+        Cell celda = new Cell()
+                .setHeight(2)
+                .setBackgroundColor(COLOR_VERDE)
+                .setBorder(Border.NO_BORDER);
+        separador.addCell(celda);
+        doc.add(separador);
     }
 
-    private static void agregarDatosFactura(Document doc, venta v, cliente cli)
-            throws DocumentException {
+    private static void agregarDatosFactura(Document doc, venta v, cliente cli) {
 
-        // tabla de dos columnas — datos de factura y datos del cliente
-        PdfPTable tabla = new PdfPTable(2);
-        tabla.setWidthPercentage(100);
-        tabla.setWidths(new float[]{1f, 1f});
-        tabla.setSpacingAfter(10);
+        // tabla de dos columnas
+        Table tabla = new Table(UnitValue.createPercentArray(new float[]{1f, 1f}))
+                .useAllAvailableWidth()
+                .setMarginBottom(10);
 
         // columna izquierda — datos de la factura
-        PdfPCell celdaFactura = new PdfPCell();
-        celdaFactura.setBorder(Rectangle.NO_BORDER);
-        celdaFactura.addElement(new Phrase("FACTURA DE VENTA", FUENTE_SECCION));
-        celdaFactura.addElement(new Phrase("No. " + String.format("%05d", v.getIdVenta()), FUENTE_NEGRITA));
-        celdaFactura.addElement(new Phrase("Fecha: " + v.getFechaHora().format(FORMATO_FECHA), FUENTE_NORMAL));
-        celdaFactura.addElement(new Phrase("Método de pago: " + v.getMetodoPago(), FUENTE_NORMAL));
+        Cell celdaFactura = new Cell()
+                .setBorder(Border.NO_BORDER)
+                .add(new Paragraph("FACTURA DE VENTA")
+                        .setBold().setFontSize(11).setFontColor(COLOR_VERDE_OSCURO))
+                .add(new Paragraph("No. " + String.format("%05d", v.getIdVenta()))
+                        .setBold().setFontSize(10))
+                .add(new Paragraph("Fecha: " + v.getFechaHora().format(FORMATO_FECHA))
+                        .setFontSize(10))
+                .add(new Paragraph("Método de pago: " + v.getMetodoPago())
+                        .setFontSize(10));
         tabla.addCell(celdaFactura);
 
         // columna derecha — datos del cliente
-        PdfPCell celdaCliente = new PdfPCell();
-        celdaCliente.setBorder(Rectangle.NO_BORDER);
-        celdaCliente.addElement(new Phrase("DATOS DEL CLIENTE", FUENTE_SECCION));
-        celdaCliente.addElement(new Phrase("Nombre: " + cli.getNombre(), FUENTE_NORMAL));
-        celdaCliente.addElement(new Phrase("Cédula: " + cli.getCedula(), FUENTE_NORMAL));
-        celdaCliente.addElement(new Phrase("Teléfono: " + cli.getTelefono(), FUENTE_NORMAL));
+        Cell celdaCliente = new Cell()
+                .setBorder(Border.NO_BORDER)
+                .add(new Paragraph("DATOS DEL CLIENTE")
+                        .setBold().setFontSize(11).setFontColor(COLOR_VERDE_OSCURO))
+                .add(new Paragraph("Nombre: " + cli.getNombre())
+                        .setFontSize(10))
+                .add(new Paragraph("Cédula: " + cli.getCedula())
+                        .setFontSize(10))
+                .add(new Paragraph("Teléfono: " + cli.getTelefono())
+                        .setFontSize(10));
         tabla.addCell(celdaCliente);
 
         doc.add(tabla);
     }
 
-    private static void agregarTablaProductos(Document doc, List<detalleVenta> detalles)
-            throws DocumentException {
+    private static void agregarTablaProductos(Document doc, List<detalleVenta> detalles) {
 
         // título de la sección
-        Paragraph titulo = new Paragraph("DETALLE DE PRODUCTOS", FUENTE_SECCION);
-        titulo.setSpacingBefore(5);
-        titulo.setSpacingAfter(8);
-        doc.add(titulo);
+        doc.add(new Paragraph("DETALLE DE PRODUCTOS")
+                .setBold()
+                .setFontSize(11)
+                .setFontColor(COLOR_VERDE_OSCURO)
+                .setMarginBottom(8));
 
-        // tabla de productos
-        PdfPTable tabla = new PdfPTable(5);
-        tabla.setWidthPercentage(100);
-        tabla.setWidths(new float[]{1f, 3f, 1.2f, 1.5f, 1.5f});
-        tabla.setSpacingAfter(10);
+        // tabla de productos con 5 columnas
+        Table tabla = new Table(UnitValue.createPercentArray(new float[]{1f, 3f, 1.2f, 1.5f, 1.5f}))
+                .useAllAvailableWidth()
+                .setMarginBottom(10);
 
-        // encabezados de la tabla
-        tabla.addCell(crearCeldaEncabezado("#"));
-        tabla.addCell(crearCeldaEncabezado("Producto"));
-        tabla.addCell(crearCeldaEncabezado("Cantidad"));
-        tabla.addCell(crearCeldaEncabezado("Precio Unitario"));
-        tabla.addCell(crearCeldaEncabezado("Subtotal"));
+        // encabezados
+        tabla.addHeaderCell(crearCeldaEncabezado("#"));
+        tabla.addHeaderCell(crearCeldaEncabezado("Producto"));
+        tabla.addHeaderCell(crearCeldaEncabezado("Cantidad"));
+        tabla.addHeaderCell(crearCeldaEncabezado("Precio Unitario"));
+        tabla.addHeaderCell(crearCeldaEncabezado("Subtotal"));
 
         // filas de productos
         int contador = 1;
@@ -158,15 +180,15 @@ public class GeneradorPDF {
             boolean filaAlterna = contador % 2 == 0;
 
             tabla.addCell(crearCeldaDato(
-                String.valueOf(contador), Element.ALIGN_CENTER, filaAlterna));
+                String.valueOf(contador), TextAlignment.CENTER, filaAlterna));
             tabla.addCell(crearCeldaDato(
-                "Producto #" + d.getIdProducto(), Element.ALIGN_LEFT, filaAlterna));
+                "Producto #" + d.getIdProducto(), TextAlignment.LEFT, filaAlterna));
             tabla.addCell(crearCeldaDato(
-                String.valueOf(d.getCantidad()), Element.ALIGN_CENTER, filaAlterna));
+                String.valueOf(d.getCantidad()), TextAlignment.CENTER, filaAlterna));
             tabla.addCell(crearCeldaDato(
-                formatearPrecio(d.getPrecioUnitario()), Element.ALIGN_RIGHT, filaAlterna));
+                formatearPrecio(d.getPrecioUnitario()), TextAlignment.RIGHT, filaAlterna));
             tabla.addCell(crearCeldaDato(
-                formatearPrecio(d.getSubTotal()), Element.ALIGN_RIGHT, filaAlterna));
+                formatearPrecio(d.getSubTotal()), TextAlignment.RIGHT, filaAlterna));
 
             contador++;
         }
@@ -174,87 +196,87 @@ public class GeneradorPDF {
         doc.add(tabla);
     }
 
-    private static void agregarTotales(Document doc, venta v)
-            throws DocumentException {
+    private static void agregarTotales(Document doc, venta v) {
 
         // tabla de totales alineada a la derecha
-        PdfPTable tabla = new PdfPTable(2);
-        tabla.setWidthPercentage(45);
-        tabla.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        tabla.setWidths(new float[]{1.5f, 1f});
-        tabla.setSpacingAfter(20);
+        Table tabla = new Table(UnitValue.createPercentArray(new float[]{1.5f, 1f}))
+                .setWidth(UnitValue.createPercentValue(45))
+                .setHorizontalAlignment(HorizontalAlignment.RIGHT)
+                .setMarginBottom(20);
 
-        // fila del total
-        PdfPCell celdaEtiqueta = new PdfPCell(new Phrase("TOTAL A PAGAR", FUENTE_TOTAL));
-        celdaEtiqueta.setBackgroundColor(COLOR_VERDE);
-        celdaEtiqueta.setPadding(8);
-        celdaEtiqueta.setBorder(Rectangle.NO_BORDER);
-        celdaEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+        // celda etiqueta
+        Cell celdaEtiqueta = new Cell()
+                .setBackgroundColor(COLOR_VERDE)
+                .setBorder(Border.NO_BORDER)
+                .setPadding(8)
+                .add(new Paragraph("TOTAL A PAGAR")
+                        .setBold()
+                        .setFontSize(13)
+                        .setFontColor(ColorConstants.WHITE));
+
+        // celda valor
+        Cell celdaValor = new Cell()
+                .setBackgroundColor(COLOR_VERDE)
+                .setBorder(Border.NO_BORDER)
+                .setPadding(8)
+                .setTextAlignment(TextAlignment.RIGHT)
+                .add(new Paragraph(formatearPrecio(v.getTotal()))
+                        .setBold()
+                        .setFontSize(13)
+                        .setFontColor(ColorConstants.WHITE));
+
         tabla.addCell(celdaEtiqueta);
-
-        PdfPCell celdaValor = new PdfPCell(new Phrase(formatearPrecio(v.getTotal()), FUENTE_TOTAL));
-        celdaValor.setBackgroundColor(COLOR_VERDE);
-        celdaValor.setPadding(8);
-        celdaValor.setBorder(Rectangle.NO_BORDER);
-        celdaValor.setHorizontalAlignment(Element.ALIGN_RIGHT);
         tabla.addCell(celdaValor);
-
         doc.add(tabla);
     }
 
-    private static void agregarPieDePagina(Document doc, PdfWriter writer)
-            throws DocumentException {
+    private static void agregarPieDePagina(Document doc) {
 
-        // línea separadora
-        PdfContentByte cb = writer.getDirectContent();
-        cb.setColorStroke(COLOR_VERDE);
-        cb.setLineWidth(1f);
-        cb.moveTo(doc.leftMargin(), writer.getVerticalPosition(false));
-        cb.lineTo(doc.right(), writer.getVerticalPosition(false));
-        cb.stroke();
-        doc.add(new Paragraph(" "));
+        doc.add(new Paragraph("¡Gracias por su compra!")
+                .setBold()
+                .setFontSize(11)
+                .setFontColor(COLOR_VERDE_OSCURO)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginTop(5));
 
-        Paragraph gracias = new Paragraph("¡Gracias por su compra!", FUENTE_SECCION);
-        gracias.setAlignment(Element.ALIGN_CENTER);
-        gracias.setSpacingBefore(5);
-        doc.add(gracias);
-
-        Paragraph mensaje = new Paragraph(
-            "Este documento es comprobante de su compra en Natural & Belleza.\n" +
-            "Conserve esta factura para cualquier reclamación.",
-            FUENTE_PIE);
-        mensaje.setAlignment(Element.ALIGN_CENTER);
-        mensaje.setSpacingBefore(4);
-        doc.add(mensaje);
+        doc.add(new Paragraph(
+                "Este documento es comprobante de su compra en Natural & Belleza.\n" +
+                "Conserve esta factura para cualquier reclamación.")
+                .setFontSize(9)
+                .setItalic()
+                .setFontColor(COLOR_GRIS_TEXTO)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginTop(4));
     }
 
-    //metodos auxiliares
+    // ── Métodos auxiliares ────────────────────────────────────────────────
 
-    private static PdfPCell crearCeldaEncabezado(String texto) {
-        PdfPCell celda = new PdfPCell(new Phrase(texto, FUENTE_ENCABEZADO));
-        celda.setBackgroundColor(COLOR_VERDE);
-        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
-        celda.setPadding(7);
-        celda.setBorderColor(COLOR_VERDE_OSCURO);
-        return celda;
+    private static Cell crearCeldaEncabezado(String texto) {
+        return new Cell()
+                .setBackgroundColor(COLOR_VERDE)
+                .setBorder(Border.NO_BORDER)
+                .setPadding(7)
+                .setTextAlignment(TextAlignment.CENTER)
+                .add(new Paragraph(texto)
+                        .setBold()
+                        .setFontSize(10)
+                        .setFontColor(ColorConstants.WHITE));
     }
 
-    private static PdfPCell crearCeldaDato(String texto, int alineacion, boolean filaAlterna) {
-        PdfPCell celda = new PdfPCell(new Phrase(texto, FUENTE_NORMAL));
-        celda.setHorizontalAlignment(alineacion);
-        celda.setPadding(6);
-        celda.setBorderColor(new BaseColor(212, 232, 204));
+    private static Cell crearCeldaDato(String texto, TextAlignment alineacion, boolean filaAlterna) {
+        Cell celda = new Cell()
+                .setPadding(6)
+                .setTextAlignment(alineacion)
+                .add(new Paragraph(texto).setFontSize(10).setFontColor(COLOR_GRIS_TEXTO));
+
         if (filaAlterna) {
             celda.setBackgroundColor(COLOR_GRIS_CLARO);
-        } else {
-            celda.setBackgroundColor(COLOR_BLANCO);
         }
+
         return celda;
     }
 
     private static String formatearPrecio(double precio) {
         return String.format("$%,.0f", precio);
     }
-
-    
 }
