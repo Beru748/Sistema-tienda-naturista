@@ -75,4 +75,19 @@ public class categoriaDAO {
 
     }
 
+    //actualiza una categoria registrada por su ID
+    public boolean actualizar(categoria cat){
+        String sql = "UPDATE categoria SET nombre=?, descripcion=? WHERE id_categoria=?";
+
+        try(PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setString(1,cat.getNombre());
+            ps.setString(2, cat.getDescripcion());
+            ps.setInt(3, cat.getIdCategoria());
+            return ps.executeUpdate() > 0;
+        }catch(SQLException e){
+            System.err.println("Error al actualizar la categoria: "+ e.getMessage());
+            return false;
+        }
+    }
+
 }
