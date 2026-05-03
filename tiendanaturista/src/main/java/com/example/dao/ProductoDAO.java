@@ -3,7 +3,11 @@ package com.example.dao;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.model.producto;
 import com.example.util.ConexionDB;
@@ -32,10 +36,55 @@ public class ProductoDAO {
             ps.setInt(9, p.getIdCategoria());
             ps.setInt(10, p.getIdLaboratorio());
             return ps.executeUpdate() > 0;
-            
+
         } catch (SQLException e) {
             System.err.println("Error al insertar producto: " + e.getMessage());
             return false;
         }
+    }
+
+    private producto mapear(ResultSet rs) throws SQLException {
+        
+        int     idProducto       = rs.getInt("id_producto");
+        String  codigoBarras     = rs.getString("codigo_barras");
+        String  nombre           = rs.getString("nombre");
+        String  descripcion      = rs.getString("descripcion");
+        double  precio           = rs.getDouble("precio");
+        int     stock            = rs.getInt("stock");
+        String  unidadMedida     = rs.getString("unidad_medida");
+        Date    fecha            = rs.getDate("fecha_vencimiento");
+        boolean activo           = rs.getInt("activo") == 1;
+        int     idCategoria      = rs.getInt("id_categoria");
+        int     idLaboratorio    = rs.getInt("id_laboratorio");
+
+        producto p = new producto();
+        p.setIdProducto(idProducto);
+        p.setCodigoBarras(codigoBarras);
+        p.setNombre(nombre);
+        p.setDescripcion(descripcion);
+        p.setPrecio(precio);
+        p.setStock(stock);
+        p.setUnidadMedida(unidadMedida);
+        p.setFechaVencimiento(fecha != null ? fecha.toLocalDate() : null);
+        p.setActivo(activo);
+        p.setIdCategotia(idCategoria);
+        p.setIdLaboratorio(idLaboratorio);
+        return p;
+    }
+
+    //lista todos los productos activos
+    public List<producto> listarTodos(){
+        List<producto> lista = new ArrayList<>();
+        String sql = "SELECT * FROM producto WHERE activo = 1";
+        try(Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql)){
+
+            while(rs.next()){
+                lista.add(mapear(rs));
+            }
+        }catch(SQLException e){
+            System.err.println("Error al listar productos: " + e.getMessage());
+        }
+        return lista;
     }
 }
