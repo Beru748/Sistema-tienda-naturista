@@ -13,7 +13,7 @@ import com.example.util.ConexionDB;
 public class laboratorioDAO {
 
     //conexion privada a la base de datos
-    private Connection con = ConexionDB.obtenerConexion();
+    private final Connection con = ConexionDB.obtenerConexion();
 
     //inserta un nuevo laboratorio a la abse de datos
     public boolean insertar (laboratorio lab){
@@ -24,8 +24,7 @@ public class laboratorioDAO {
             ps.setString(2, lab.getTelefono());
             return ps.executeUpdate()>0;
         }catch (SQLException e){
-            System.err.println("Error al insertar laboratorio");
-            e.printStackTrace();
+            System.err.println("Error al insertar laboratorio" + e.getMessage());
             return false;
         }
     }
@@ -50,8 +49,7 @@ public class laboratorioDAO {
                     lista.add(mapear(rs));
                 }
             }catch (SQLException e){
-                System.err.println("Error al listar laboratorio");
-                e.printStackTrace();
+                System.err.println("Error al listar laboratorio" +e.getMessage());
             }
             return lista;
     }
@@ -66,8 +64,7 @@ public class laboratorioDAO {
                 return mapear(rs);
             }
         } catch (SQLException e) {
-            System.err.println("Error al buscar laboratorio.");
-            e.printStackTrace();
+            System.err.println("Error al buscar laboratorio." + e.getMessage());
         }
         return null;
     }
@@ -81,8 +78,7 @@ public class laboratorioDAO {
             ps.setInt(3, lab.getIdLaboratorio());
             return ps.executeUpdate() > 0;
         }catch(SQLException e){
-            System.err.println("Error al actualizar laboratorio");
-            e.printStackTrace();
+            System.err.println("Error al actualizar laboratorio" + e.getMessage());
             return false;
         }
     }
@@ -94,8 +90,7 @@ public class laboratorioDAO {
             ps.setInt(1,id);
             return ps.executeUpdate() > 0;
         }catch(SQLException e){
-            System.err.println("Error al eliminar laboratorio");
-            e.printStackTrace();
+            System.err.println("Error al eliminar laboratorio" + e.getMessage());
             return false;
         }
     }
