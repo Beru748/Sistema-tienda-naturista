@@ -67,7 +67,7 @@ public class ProductoDAO {
         p.setUnidadMedida(unidadMedida);
         p.setFechaVencimiento(fecha != null ? fecha.toLocalDate() : null);
         p.setActivo(activo);
-        p.setIdCategotia(idCategoria);
+        p.setIdCategoria(idCategoria);
         p.setIdLaboratorio(idLaboratorio);
         return p;
     }
@@ -90,7 +90,7 @@ public class ProductoDAO {
 
     //busca un producto por su ID
     public producto buscarPorId(int id){
-        String sql = "SELECT * FROM where id_producto = ?";
+        String sql = "SELECT * FROM WHERE id_producto = ?";
         try(PreparedStatement ps = con.prepareStatement(sql)){
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
@@ -106,7 +106,7 @@ public class ProductoDAO {
     //busca productos por nombre
     public List<producto> buscarPorNombre(String nombre){
         List<producto> lista = new ArrayList<>();
-        String sql = "SELECT * FROM producto WHERE UPPER(nombre LIKE UPPER(?) AND activo = 1 ";
+        String sql = "SELECT * FROM producto WHERE UPPER(nombre) LIKE UPPER(?) AND activo = 1 ";
         try(PreparedStatement ps = con.prepareStatement(sql)){
             ps.setString(1, "%" + nombre + "%");
             ResultSet rs = ps.executeQuery();
@@ -123,7 +123,7 @@ public class ProductoDAO {
     //busca productos por categoria
     public List<producto> buscarPorCategoria(int idCategoria){
         List<producto> lista = new ArrayList<>();
-        String sql = "SELECT * FROM prodcuto WHERE id_categoria = ? AND activo = 1";
+        String sql = "SELECT * FROM producto WHERE id_categoria = ? AND activo = 1";
         try(PreparedStatement ps = con.prepareStatement(sql)){
             ps.setInt(1, idCategoria);
             ResultSet rs = ps.executeQuery();
@@ -168,7 +168,7 @@ public class ProductoDAO {
     public boolean eliminar(int id){
 
         String sql = "UPDATE producto SET activo = 0 WHERE id_producto = ?";
-        
+
         try(PreparedStatement ps = con.prepareStatement(sql)){
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
