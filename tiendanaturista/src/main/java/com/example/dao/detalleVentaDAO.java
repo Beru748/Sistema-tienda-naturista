@@ -2,7 +2,10 @@ package com.example.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.model.detalleVenta;
 import com.example.util.ConexionDB;
@@ -28,5 +31,32 @@ public class detalleVentaDAO {
         }
     }
 
-    
+    // lista todos los detalles de una venta especifica
+    public List<detalleVenta> listarPorVenta(int idVenta) {
+        List<detalleVenta> lista = new ArrayList<>();
+        String sql = "SELECT * FROM detalle_venta WHERE id_venta = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idVenta);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                lista.add(mapear(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al listar detalles de venta: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    // mapeo ResultSet → objeto detalleVenta
+    private detalleVenta mapear(ResultSet rs) throws SQLException {
+        int    idDetalle      = rs.getInt("id_detalle");
+        int    idVenta        = rs.getInt("id_venta");
+        int    idProducto     = rs.getInt("id_producto");
+        int    cantidad       = rs.getInt("cantidad");
+        double precioUnitario = rs.getDouble("precio_unitario");
+        double subTotal       = rs.getDouble("sub_total");
+        return new detalleVenta(idDetalle, idVenta, idProducto, cantidad, precioUnitario, subTotal);
+    }
+
+
 }
