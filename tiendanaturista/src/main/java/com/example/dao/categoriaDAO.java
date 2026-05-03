@@ -32,7 +32,7 @@ public class categoriaDAO {
         }
     }
 
-    //lista todas laas categorias registradas
+    //lista todas las categorias registradas
     public List<categoria> listarTodos(){
         List<categoria> lista = new ArrayList<>();
         String sql = "SELECT * FROM categoria";
@@ -50,12 +50,29 @@ public class categoriaDAO {
     }
 
     private categoria mapear(ResultSet rs) throws SQLException{
-        
+
         int idCategoria = rs.getInt("id_categoria");
         String nombre = rs.getString("nombre");
         String descripcion = rs.getString("descripcion");
 
         return new categoria(idCategoria, nombre, descripcion);
+    }
+
+    //busca una categoria por ID
+    public categoria buscarPorId(int id){
+
+        String sql = "SELECT * FROM categoria WHERE id_categoria = ?";
+        try(PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return mapear(rs);
+            }
+        }catch(SQLException e){
+            System.err.println("Error al buscar categoria: "+ e.getMessage());
+        }
+        return null;
+
     }
 
 }
