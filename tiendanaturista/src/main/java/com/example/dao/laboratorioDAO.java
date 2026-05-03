@@ -17,14 +17,14 @@ public class laboratorioDAO {
 
     //inserta un nuevo laboratorio a la abse de datos
     public boolean insertar (laboratorio lab){
-        String sql = "INSERT INTO laboratoio VALUES (seq_laboratorio.NEXTVAL, ?, ?)";
+        String sql = "INSERT INTO laboratorio VALUES (seq_laboratorio.NEXTVAL, ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, lab.getNombre());
             ps.setString(2, lab.getTelefono());
             return ps.executeUpdate()>0;
         }catch (SQLException e){
-            System.err.println("Error al insertar laboratorio" + e.getMessage());
+            System.err.println("Error al insertar laboratorio: " + e.getMessage());
             return false;
         }
     }
@@ -49,7 +49,7 @@ public class laboratorioDAO {
                     lista.add(mapear(rs));
                 }
             }catch (SQLException e){
-                System.err.println("Error al listar laboratorio" +e.getMessage());
+                System.err.println("Error al listar laboratorio: " + e.getMessage());
             }
        return lista;
     }
@@ -64,7 +64,7 @@ public class laboratorioDAO {
                 return mapear(rs);
             }
         } catch (SQLException e) {
-            System.err.println("Error al buscar laboratorio." + e.getMessage());
+            System.err.println("Error al buscar laboratorio: " + e.getMessage());
         }
         return null;
     }
@@ -78,7 +78,7 @@ public class laboratorioDAO {
             ps.setInt(3, lab.getIdLaboratorio());
             return ps.executeUpdate() > 0;
         }catch(SQLException e){
-            System.err.println("Error al actualizar laboratorio" + e.getMessage());
+            System.err.println("Error al actualizar laboratorio: " + e.getMessage());
             return false;
         }
     }
@@ -90,7 +90,7 @@ public class laboratorioDAO {
             ps.setInt(1,id);
             return ps.executeUpdate() > 0;
         }catch(SQLException e){
-            System.err.println("Error al eliminar laboratorio" + e.getMessage());
+            System.err.println("Error al eliminar laboratorio: " + e.getMessage());
             return false;
         }
     }
