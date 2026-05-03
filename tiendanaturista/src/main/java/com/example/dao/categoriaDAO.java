@@ -90,4 +90,17 @@ public class categoriaDAO {
         }
     }
 
+    //elimina una categoria por su ID
+    public boolean eliminar(int id){
+        String sql = "DELETE FROM categoria WHERE id_categoria = ?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        }catch(SQLException e){
+            System.err.println("Error al eliminar la categoria: "+ e.getLocalizedMessage());
+            return false;
+        }
+    }
+
 }
