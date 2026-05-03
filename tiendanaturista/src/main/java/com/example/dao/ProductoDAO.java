@@ -119,4 +119,20 @@ public class ProductoDAO {
         }
         return lista;
     }
+
+    //busca productos por categoria
+    public List<producto> buscarPorCategoria(int idCategoria){
+        List<producto> lista = new ArrayList<>();
+        String sql = "SELECT * FROM prodcuto WHERE id_categoria = ? AND activo = 1";
+        try(PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setInt(1, idCategoria);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                lista.add(mapear(rs));
+            }
+        }catch(SQLException e){
+            System.err.println("Error al buscar producto por categoria: " + e.getMessage());
+        }
+        return lista;
+    }
 }
