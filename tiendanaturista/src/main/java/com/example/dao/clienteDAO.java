@@ -72,4 +72,19 @@ public class clienteDAO {
         return null;
     }
 
+    //busca un cliente por cedula
+    public cliente buscarPorCedula(String cedula){
+        String sql = "SELECT * FROM cliente WHERE cedula = ?";
+        try(PreparedStatement ps=con.prepareStatement(sql)){
+            ps.setString(1, cedula);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return mapear(rs);
+            }
+        }catch(SQLException e){
+            System.err.println("Error al buscar cliente por cedula: "+ e.getMessage());
+        }
+        return null;
+    }
+
 }
