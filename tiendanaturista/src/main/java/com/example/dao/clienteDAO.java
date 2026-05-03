@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class clienteDAO {
         return new cliente(idCliente, cedula, nombre, telefono);
     }
 
-    
+
     //lista todos los clientes registrados
     public List<cliente> listarTodos(){
         List<cliente> lista = new ArrayList<>();
@@ -55,5 +56,20 @@ public class clienteDAO {
             return lista;
     }
 
+    //busca un cliente por su ID
+    public cliente buscarPorId(int id){
+        String sql = "SELECT * FROM cliente WHERE id_cliente = ?";
+
+        try(PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return mapear(rs);
+            }
+        }catch(SQLException e){
+            System.err.println("Error al buscar cliente: " + e.getMessage());
+        }
+        return null;
+    }
 
 }
