@@ -130,5 +130,49 @@ public class GeneradorPDF {
         doc.add(tabla);
     }
 
+    private static void agregarTablaProductos(Document doc, List<detalleVenta> detalles)
+            throws DocumentException {
+
+        // título de la sección
+        Paragraph titulo = new Paragraph("DETALLE DE PRODUCTOS", FUENTE_SECCION);
+        titulo.setSpacingBefore(5);
+        titulo.setSpacingAfter(8);
+        doc.add(titulo);
+
+        // tabla de productos
+        PdfPTable tabla = new PdfPTable(5);
+        tabla.setWidthPercentage(100);
+        tabla.setWidths(new float[]{1f, 3f, 1.2f, 1.5f, 1.5f});
+        tabla.setSpacingAfter(10);
+
+        // encabezados de la tabla
+        tabla.addCell(crearCeldaEncabezado("#"));
+        tabla.addCell(crearCeldaEncabezado("Producto"));
+        tabla.addCell(crearCeldaEncabezado("Cantidad"));
+        tabla.addCell(crearCeldaEncabezado("Precio Unitario"));
+        tabla.addCell(crearCeldaEncabezado("Subtotal"));
+
+        // filas de productos
+        int contador = 1;
+        for (detalleVenta d : detalles) {
+            boolean filaAlterna = contador % 2 == 0;
+
+            tabla.addCell(crearCeldaDato(
+                String.valueOf(contador), Element.ALIGN_CENTER, filaAlterna));
+            tabla.addCell(crearCeldaDato(
+                "Producto #" + d.getIdProducto(), Element.ALIGN_LEFT, filaAlterna));
+            tabla.addCell(crearCeldaDato(
+                String.valueOf(d.getCantidad()), Element.ALIGN_CENTER, filaAlterna));
+            tabla.addCell(crearCeldaDato(
+                formatearPrecio(d.getPrecioUnitario()), Element.ALIGN_RIGHT, filaAlterna));
+            tabla.addCell(crearCeldaDato(
+                formatearPrecio(d.getSubTotal()), Element.ALIGN_RIGHT, filaAlterna));
+
+            contador++;
+        }
+
+        doc.add(tabla);
+    }
+
     
 }
