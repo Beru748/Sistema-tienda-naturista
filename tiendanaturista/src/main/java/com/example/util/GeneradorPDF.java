@@ -228,5 +228,33 @@ public class GeneradorPDF {
         doc.add(mensaje);
     }
 
+    //metodos auxiliares
+
+    private static PdfPCell crearCeldaEncabezado(String texto) {
+        PdfPCell celda = new PdfPCell(new Phrase(texto, FUENTE_ENCABEZADO));
+        celda.setBackgroundColor(COLOR_VERDE);
+        celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+        celda.setPadding(7);
+        celda.setBorderColor(COLOR_VERDE_OSCURO);
+        return celda;
+    }
+
+    private static PdfPCell crearCeldaDato(String texto, int alineacion, boolean filaAlterna) {
+        PdfPCell celda = new PdfPCell(new Phrase(texto, FUENTE_NORMAL));
+        celda.setHorizontalAlignment(alineacion);
+        celda.setPadding(6);
+        celda.setBorderColor(new BaseColor(212, 232, 204));
+        if (filaAlterna) {
+            celda.setBackgroundColor(COLOR_GRIS_CLARO);
+        } else {
+            celda.setBackgroundColor(COLOR_BLANCO);
+        }
+        return celda;
+    }
+
+    private static String formatearPrecio(double precio) {
+        return String.format("$%,.0f", precio);
+    }
+
     
 }
