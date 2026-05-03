@@ -25,6 +25,19 @@
             <artifactId>javafx-fxml</artifactId>
             <version>13</version>
         </dependency>
+
+        <!-- iText 7 para generar PDF -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>kernel</artifactId>
+            <version>7.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>layout</artifactId>
+            <version>7.2.5</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -34,6 +47,10 @@
                 <version>3.8.0</version>
                 <configuration>
                     <release>11</release>
+                    <compilerArgs>
+                        <arg>--add-reads</arg>
+                        <arg>com.example=ALL-UNNAMED</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
