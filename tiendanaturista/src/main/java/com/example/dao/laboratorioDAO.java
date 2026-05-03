@@ -15,8 +15,8 @@ public class laboratorioDAO {
     //conexion privada a la base de datos
     private Connection con = ConexionDB.obtenerConexion();
 
-     //inserta un nuevo laboratorio a la abse de datos
-     public boolean insertar (laboratorio lab){
+    //inserta un nuevo laboratorio a la abse de datos
+    public boolean insertar (laboratorio lab){
         String sql = "INSERT INTO laboratoio VALUES (seq_laboratorio.NEXTVAL, ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
@@ -28,19 +28,19 @@ public class laboratorioDAO {
             e.printStackTrace();
             return false;
         }
-     }
+    }
       
-     private laboratorio mapear(ResultSet rs) throws SQLException{
+    private laboratorio mapear(ResultSet rs) throws SQLException{
 
         int idLaboratorio = rs.getInt("id_laboratorio");
         String nombre     = rs.getString("nombre");
         String telefono   = rs.getString("telefono");
 
         return new laboratorio(idLaboratorio, nombre, telefono);
-     }
+    }
 
-     //lista todos los laboratorios
-     public List<laboratorio> listarTodos(){
+    //lista todos los laboratorios
+    public List<laboratorio> listarTodos(){
         List<laboratorio> lista = new ArrayList<>();
         String sql = "SELECT * FROM laboratorio";
 
@@ -54,6 +54,22 @@ public class laboratorioDAO {
                 e.printStackTrace();
             }
             return lista;
-     }
+    }
+
+    //Buscar laboratorio por id
+    public laboratorio buscarPorId(int id) {
+        String sql = "SELECT * FROM laboratorio WHERE id_laboratorio = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapear(rs);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al buscar laboratorio.");
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }
