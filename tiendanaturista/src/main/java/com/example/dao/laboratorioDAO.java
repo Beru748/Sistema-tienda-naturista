@@ -51,7 +51,7 @@ public class laboratorioDAO {
             }catch (SQLException e){
                 System.err.println("Error al listar laboratorio" +e.getMessage());
             }
-            return lista;
+       return lista;
     }
 
     //Buscar laboratorio por id
