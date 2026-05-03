@@ -11,11 +11,11 @@ public class laboratorio {
         this.telefono=telefono;
     }
 
-    public int getIdLaboratotio(){
+    public int getIdLaboratorio(){
         return idLaboratorio;
     }
 
-    public void setIdLaboratoio(int idLaboratoio){
+    public void setIdLaboratorio(int idLaboratoio){
         this.idLaboratorio=idLaboratoio;
     }
 
