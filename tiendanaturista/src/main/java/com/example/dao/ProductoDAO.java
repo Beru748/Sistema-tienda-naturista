@@ -102,4 +102,21 @@ public class ProductoDAO {
         }
         return null;
     }
+
+    //busca productos por nombre
+    public List<producto> buscarPorNombre(String nombre){
+        List<producto> lista = new ArrayList<>();
+        String sql = "SELECT * FROM producto WHERE UPPER(nombre LIKE UPPER(?) AND activo = 1 ";
+        try(PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setString(1, "%" + nombre + "%");
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+
+                lista.add(mapear(rs));
+            }
+        }catch(SQLException e){ 
+            System.err.println("Error al buscar producto por nombre: " + e.getMessage());
+        }
+        return lista;
+    }
 }
