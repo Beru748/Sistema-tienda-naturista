@@ -7,8 +7,11 @@ import com.example.model.cliente;
 import com.example.model.detalleVenta;
 import com.example.model.venta;
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
 
 public class GeneradorPDF {
@@ -61,5 +64,38 @@ public class GeneradorPDF {
             System.err.println("Error al generar PDF: " + e.getMessage());
         }
     }
+
+    private static void agregarEncabezado(Document doc) throws DocumentException {
+
+        // nombre de la tienda
+        Paragraph nombre = new Paragraph("🌿 Natural & Belleza", FUENTE_TITULO);
+        nombre.setAlignment(Element.ALIGN_CENTER);
+        nombre.setSpacingAfter(4);
+        doc.add(nombre);
+
+        // slogan
+        Paragraph slogan = new Paragraph("Tu tienda de productos naturales y de belleza", FUENTE_SUBTITULO);
+        slogan.setAlignment(Element.ALIGN_CENTER);
+        slogan.setSpacingAfter(4);
+        doc.add(slogan);
+
+        // info de contacto
+        Paragraph contacto = new Paragraph("Valledupar, Cesar  |  Tel: 605-123-4567  |  naturalbelleza@email.com", FUENTE_SUBTITULO);
+        contacto.setAlignment(Element.ALIGN_CENTER);
+        contacto.setSpacingAfter(10);
+        doc.add(contacto);
+    }
+
+    private static void agregarLineaSeparadora(Document doc, PdfWriter writer)
+            throws DocumentException {
+        PdfContentByte cb = writer.getDirectContent();
+        cb.setColorStroke(COLOR_VERDE);
+        cb.setLineWidth(1.5f);
+        cb.moveTo(doc.leftMargin(), writer.getVerticalPosition(false));
+        cb.lineTo(doc.right(), writer.getVerticalPosition(false));
+        cb.stroke();
+        doc.add(new Paragraph(" "));
+    }
+
     
 }
