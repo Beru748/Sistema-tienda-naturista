@@ -1,7 +1,11 @@
 package com.example.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.model.laboratorio;
 import com.example.util.ConexionDB;
@@ -24,7 +28,32 @@ public class laboratorioDAO {
             e.printStackTrace();
             return false;
         }
+     }
+      
+     private laboratorio mapear(ResultSet rs) throws SQLException{
 
+        int idLaboratorio = rs.getInt("id_laboratorio");
+        String nombre     = rs.getString("nombre");
+        String telefono   = rs.getString("telefono");
+
+        return new laboratorio(idLaboratorio, nombre, telefono);
+     }
+
+     //lista todos los laboratorios
+     public List<laboratorio> listarTodos(){
+        List<laboratorio> lista = new ArrayList<>();
+        String sql = "SELECT * FROM laboratorio";
+
+        try(Statement st = con.createStatement();
+            ResultSet rs = sr.executeQuery(sql)){
+                while (rs.next()){
+                    lista.add(mapear(rs));
+                }
+            }catch (SQLException e){
+                System.err.println("Error al listar laboratorio");
+                e.printStackTrace();
+            }
+            return lista;
      }
 
 }
