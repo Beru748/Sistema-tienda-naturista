@@ -45,7 +45,7 @@ public class laboratorioDAO {
         String sql = "SELECT * FROM laboratorio";
 
         try(Statement st = con.createStatement();
-            ResultSet rs = sr.executeQuery(sql)){
+            ResultSet rs = st.executeQuery(sql)){
                 while (rs.next()){
                     lista.add(mapear(rs));
                 }
@@ -70,6 +70,21 @@ public class laboratorioDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    //Actualizar laboratorios
+    public boolean actualizar(laboratorio lab){
+        String sql = "UPDATE laboratorio SET nombre=?, telefono=? WHERE id_laboratorio=?";
+        try (PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setString(1, lab.getNombre());
+            ps.setString(2, lab.getTelefono());
+            ps.setInt(3, lab.getIdLaboratorio());
+            return ps.executeUpdate() > 0;
+        }catch(SQLException e){
+            System.err.println("Error al actualizar laboratorio");
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }
