@@ -135,4 +135,33 @@ public class ProductoDAO {
         }
         return lista;
     }
+
+    // actualiza un producto existente
+    public boolean actualizar(producto p) {
+
+        String sql = "UPDATE producto SET codigo_barras=?, nombre=?, descripcion=?, " +
+                     "precio=?, stock=?, unidad_medida=?, fecha_vencimiento=?, " +
+                     "id_categoria=?, id_laboratorio=? WHERE id_producto=?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, p.getCodigoBarras());
+            ps.setString(2, p.getNombre());
+            ps.setString(3, p.getDescripcion());
+            ps.setDouble(4, p.getPrecio());
+            ps.setInt(5, p.getStock());
+            ps.setString(6, p.getUnidadMedida());
+            ps.setDate(7, p.getFechaVencimiento() != null
+                ? Date.valueOf(p.getFechaVencimiento()) : null);
+            ps.setInt(8, p.getIdCategoria());
+            ps.setInt(9, p.getIdLaboratorio());
+            ps.setInt(10, p.getIdProducto());
+            return ps.executeUpdate() > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar producto: " + e.getMessage());
+            return false;
+        }
+    }
+
 }
