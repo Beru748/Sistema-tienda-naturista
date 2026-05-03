@@ -44,7 +44,7 @@ public class ProductoDAO {
     }
 
     private producto mapear(ResultSet rs) throws SQLException {
-        
+
         int     idProducto       = rs.getInt("id_producto");
         String  codigoBarras     = rs.getString("codigo_barras");
         String  nombre           = rs.getString("nombre");
@@ -86,5 +86,20 @@ public class ProductoDAO {
             System.err.println("Error al listar productos: " + e.getMessage());
         }
         return lista;
+    }
+
+    //busca un producto por su ID
+    public producto buscarPorId(int id){
+        String sql = "SELECT * FROM where id_producto = ?";
+        try(PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return mapear(rs);
+            }
+        }catch(SQLException e){
+            System.err.println("Error al buscar producto: " + e.getMessage());
+        }
+        return null;
     }
 }
