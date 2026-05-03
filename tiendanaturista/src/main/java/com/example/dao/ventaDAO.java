@@ -30,10 +30,11 @@ public class ventaDAO {
     }
 
     private venta mapear(ResultSet rs) throws SQLException{
-        int idVenta    =rs.getInt("id_venta");
-        double total   =rs.getDouble("total");
-        String metodoPago =rs.getString("metodo_pago");
-        int idCliente  =rs.getInt("id_cliente");
+        int idVenta       = rs.getInt("id_venta");
+        double total      = rs.getDouble("total");
+        String metodoPago = rs.getString("metodo_pago");
+        int idCliente     = rs.getInt("id_cliente");
+        
         return new venta(idVenta,
             rs.getTimestamp("fecha_hora").toLocalDateTime(),
             total,
@@ -55,5 +56,20 @@ public class ventaDAO {
                 System.err.println("Error al listar ventas: " + e.getMessage());
             }
             return lista;
+    }
+
+    //busca una venta por su ID
+    public venta buscarPorId(int id){
+        String sql = "SELECT * FROM venta WHERE id_venta = ?";
+        try(PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return mapear(rs);
+            }
+        }catch(SQLException e){
+            System.err.println("Error al buscar venta: " + e.getMessage());
+        }
+        return null;
     }
 }
