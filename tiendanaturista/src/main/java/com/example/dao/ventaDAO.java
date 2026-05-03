@@ -1,10 +1,12 @@
 package com.example.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,4 +74,22 @@ public class ventaDAO {
         }
         return null;
     }
+
+    // busca ventas entre dos fechas
+    public List<venta> buscarPorRangoFechas(LocalDate desde, LocalDate hasta) {
+        List<venta> lista = new ArrayList<>();
+        String sql = "SELECT * FROM venta WHERE TRUNC(fecha_hora) BETWEEN ? AND ? ORDER BY fecha_hora DESC";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setDate(1, Date.valueOf(desde));
+            ps.setDate(2, Date.valueOf(hasta));
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                lista.add(mapear(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al buscar ventas por rango de fechas: " + e.getMessage());
+        }
+        return lista;
+    }
+    
 }
