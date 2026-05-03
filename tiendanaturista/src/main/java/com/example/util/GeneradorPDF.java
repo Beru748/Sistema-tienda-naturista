@@ -11,7 +11,10 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 public class GeneradorPDF {
@@ -95,6 +98,36 @@ public class GeneradorPDF {
         cb.lineTo(doc.right(), writer.getVerticalPosition(false));
         cb.stroke();
         doc.add(new Paragraph(" "));
+    }
+
+    private static void agregarDatosFactura(Document doc, venta v, cliente cli)
+            throws DocumentException {
+
+        // tabla de dos columnas — datos de factura y datos del cliente
+        PdfPTable tabla = new PdfPTable(2);
+        tabla.setWidthPercentage(100);
+        tabla.setWidths(new float[]{1f, 1f});
+        tabla.setSpacingAfter(10);
+
+        // columna izquierda — datos de la factura
+        PdfPCell celdaFactura = new PdfPCell();
+        celdaFactura.setBorder(Rectangle.NO_BORDER);
+        celdaFactura.addElement(new Phrase("FACTURA DE VENTA", FUENTE_SECCION));
+        celdaFactura.addElement(new Phrase("No. " + String.format("%05d", v.getIdVenta()), FUENTE_NEGRITA));
+        celdaFactura.addElement(new Phrase("Fecha: " + v.getFechaHora().format(FORMATO_FECHA), FUENTE_NORMAL));
+        celdaFactura.addElement(new Phrase("Método de pago: " + v.getMetodoPago(), FUENTE_NORMAL));
+        tabla.addCell(celdaFactura);
+
+        // columna derecha — datos del cliente
+        PdfPCell celdaCliente = new PdfPCell();
+        celdaCliente.setBorder(Rectangle.NO_BORDER);
+        celdaCliente.addElement(new Phrase("DATOS DEL CLIENTE", FUENTE_SECCION));
+        celdaCliente.addElement(new Phrase("Nombre: " + cli.getNombre(), FUENTE_NORMAL));
+        celdaCliente.addElement(new Phrase("Cédula: " + cli.getCedula(), FUENTE_NORMAL));
+        celdaCliente.addElement(new Phrase("Teléfono: " + cli.getTelefono(), FUENTE_NORMAL));
+        tabla.addCell(celdaCliente);
+
+        doc.add(tabla);
     }
 
     
