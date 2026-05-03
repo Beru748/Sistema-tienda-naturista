@@ -202,5 +202,31 @@ public class GeneradorPDF {
         doc.add(tabla);
     }
 
+    private static void agregarPieDePagina(Document doc, PdfWriter writer)
+            throws DocumentException {
+
+        // línea separadora
+        PdfContentByte cb = writer.getDirectContent();
+        cb.setColorStroke(COLOR_VERDE);
+        cb.setLineWidth(1f);
+        cb.moveTo(doc.leftMargin(), writer.getVerticalPosition(false));
+        cb.lineTo(doc.right(), writer.getVerticalPosition(false));
+        cb.stroke();
+        doc.add(new Paragraph(" "));
+
+        Paragraph gracias = new Paragraph("¡Gracias por su compra!", FUENTE_SECCION);
+        gracias.setAlignment(Element.ALIGN_CENTER);
+        gracias.setSpacingBefore(5);
+        doc.add(gracias);
+
+        Paragraph mensaje = new Paragraph(
+            "Este documento es comprobante de su compra en Natural & Belleza.\n" +
+            "Conserve esta factura para cualquier reclamación.",
+            FUENTE_PIE);
+        mensaje.setAlignment(Element.ALIGN_CENTER);
+        mensaje.setSpacingBefore(4);
+        doc.add(mensaje);
+    }
+
     
 }
