@@ -4,6 +4,7 @@ module com.example {
     requires javafx.graphics;
     requires java.sql;
     requires java.desktop;
+    requires itextpdf;
 
     opens com.example to javafx.fxml;
     exports com.example;
