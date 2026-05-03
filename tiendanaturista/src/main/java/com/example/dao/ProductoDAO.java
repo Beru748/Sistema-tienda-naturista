@@ -157,9 +157,23 @@ public class ProductoDAO {
             ps.setInt(9, p.getIdLaboratorio());
             ps.setInt(10, p.getIdProducto());
             return ps.executeUpdate() > 0;
-            
+
         } catch (SQLException e) {
             System.err.println("Error al actualizar producto: " + e.getMessage());
+            return false;
+        }
+    }
+
+    //"eliminar" - desactiva el producto sin borrar el registro
+    public boolean eliminar(int id){
+
+        String sql = "UPDATE producto SET activo = 0 WHERE id_producto = ?";
+        
+        try(PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        }catch(SQLException e){
+            System.err.println("Error al eliminar producto: " + e.getMessage());
             return false;
         }
     }
