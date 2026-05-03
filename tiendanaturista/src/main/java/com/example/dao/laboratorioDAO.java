@@ -87,4 +87,17 @@ public class laboratorioDAO {
         }
     }
 
+    //Elimina un laboratorio por su ID
+    public boolean eliminar(int id){
+        String sql = "DELETE FROM laboratorio WHERE id_laboratorio = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setInt(1,id);
+            return ps.executeUpdate() > 0;
+        }catch(SQLException e){
+            System.err.println("Error al eliminar laboratorio");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
