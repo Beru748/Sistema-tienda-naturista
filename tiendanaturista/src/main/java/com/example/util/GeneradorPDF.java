@@ -174,5 +174,33 @@ public class GeneradorPDF {
         doc.add(tabla);
     }
 
+    private static void agregarTotales(Document doc, venta v)
+            throws DocumentException {
+
+        // tabla de totales alineada a la derecha
+        PdfPTable tabla = new PdfPTable(2);
+        tabla.setWidthPercentage(45);
+        tabla.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        tabla.setWidths(new float[]{1.5f, 1f});
+        tabla.setSpacingAfter(20);
+
+        // fila del total
+        PdfPCell celdaEtiqueta = new PdfPCell(new Phrase("TOTAL A PAGAR", FUENTE_TOTAL));
+        celdaEtiqueta.setBackgroundColor(COLOR_VERDE);
+        celdaEtiqueta.setPadding(8);
+        celdaEtiqueta.setBorder(Rectangle.NO_BORDER);
+        celdaEtiqueta.setHorizontalAlignment(Element.ALIGN_LEFT);
+        tabla.addCell(celdaEtiqueta);
+
+        PdfPCell celdaValor = new PdfPCell(new Phrase(formatearPrecio(v.getTotal()), FUENTE_TOTAL));
+        celdaValor.setBackgroundColor(COLOR_VERDE);
+        celdaValor.setPadding(8);
+        celdaValor.setBorder(Rectangle.NO_BORDER);
+        celdaValor.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        tabla.addCell(celdaValor);
+
+        doc.add(tabla);
+    }
+
     
 }
