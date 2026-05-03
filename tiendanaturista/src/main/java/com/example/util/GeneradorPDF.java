@@ -1,9 +1,15 @@
 package com.example.util;
 
+import java.io.FileOutputStream;
 import java.time.format.DateTimeFormatter;
 
+import com.example.model.cliente;
+import com.example.model.detalleVenta;
+import com.example.model.venta;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.PdfWriter;
 
 public class GeneradorPDF {
 
@@ -30,5 +36,30 @@ public class GeneradorPDF {
 
     // constructor privado — no se instancia
     private GeneradorPDF() {}
+
+    //metodo principal para generar la factura
+    public static void generarFactura(venta v, cliente cli, List<detalleVenta> detalles,String rutaArchivo) {
+        try {
+            Document documento = new Document(PageSize.A4, 40, 40, 40, 40);
+            PdfWriter writer = PdfWriter.getInstance(documento,
+                    new FileOutputStream(rutaArchivo));
+
+            documento.open();
+
+            agregarEncabezado(documento);
+            agregarLineaSeparadora(documento, writer);
+            agregarDatosFactura(documento, v, cli);
+            agregarLineaSeparadora(documento, writer);
+            agregarTablaProductos(documento, detalles);
+            agregarTotales(documento, v);
+            agregarPieDePagina(documento, writer);
+
+            documento.close();
+            System.out.println("Factura generada correctamente en: " + rutaArchivo);
+
+        } catch (Exception e) {
+            System.err.println("Error al generar PDF: " + e.getMessage());
+        }
+    }
     
 }
