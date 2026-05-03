@@ -101,4 +101,17 @@ public class clienteDAO {
         }
     }
 
+    //elimina un cliente por su ID
+    public boolean eliminar(int id){
+        String sql = "DELETE FROM cliente WHERE id_cliente = ?";
+
+        try(PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        }catch(SQLException e){
+            System.err.println("Error al eliminar el cliente: " + e.getMessage());
+            return false;
+        }
+    }
+
 }
