@@ -49,10 +49,20 @@
                 <Separator orientation="VERTICAL" prefHeight="24.0" style="-fx-background-color: #E0EDD9;" />
 
                 <!-- ComboBox Categoría -->
-                <ComboBox fx:id="comboCategoria" prefHeight="36.0" prefWidth="150.0" promptText="Categoría" styleClass="combo-filtro" />
+                <HBox alignment="CENTER_LEFT" spacing="4.0">
+                    <children>
+                        <ComboBox fx:id="comboCategoria" prefHeight="36.0" prefWidth="150.0" promptText="Categoría" styleClass="combo-filtro" />
+                        <Button fx:id="btnAbrirGestionCategorias" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #0CC053; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;" text="+" />
+                    </children>
+                </HBox>
 
                 <!-- ComboBox Laboratorio -->
-                <ComboBox fx:id="comboLaboratorio" prefHeight="36.0" prefWidth="150.0" promptText="Laboratorio" styleClass="combo-filtro" />
+                <HBox alignment="CENTER_LEFT" spacing="4.0">
+                    <children>
+                        <ComboBox fx:id="comboLaboratorio" prefHeight="36.0" prefWidth="150.0" promptText="Laboratorio" styleClass="combo-filtro" />
+                        <Button fx:id="btnAbrirGestionLaboratorios" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #0CC053; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-cursor: hand;" text="+" />
+                    </children>
+                </HBox>
 
                 <!-- Spacer -->
                 <Pane HBox.hgrow="ALWAYS" />
