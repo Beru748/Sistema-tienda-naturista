@@ -10,8 +10,8 @@ public class ConexionDB {
     // "1521" es el puerto por defecto de Oracle.
     // "xe" o "ORCL" es el SID o nombre del servicio (cámbialo según tu configuración).
     private static final String URL = "jdbc:oracle:thin:@localhost:1521/XEPDB1";
-    private static final String USUARIO = "system";
-    private static final String CONTRASENA = "1067595062";
+    private static final String USUARIO = "tnaturista";
+    private static final String CONTRASENA = "camilo123";
 
     // Variable para almacenar la conexión
     private static Connection conexion = null;
@@ -29,7 +29,7 @@ public class ConexionDB {
 
                 // 3. Establecer la conexión
                 conexion = DriverManager.getConnection(URL, USUARIO, CONTRASENA);
-                System.out.println("¡Conexión a Oracle establecida con éxito!");
+                System.out.println("¡Conexion exitosa a la base de datos Tienda naturista!");
 
             } catch (ClassNotFoundException e) {
                 System.err.println("Error: No se encontró el driver de Oracle. Verifica que el ojdbc.jar esté en el proyecto.");
