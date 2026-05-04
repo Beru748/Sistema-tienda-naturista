@@ -7,57 +7,37 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import java.time.LocalDate;
 
-/**
- * MOCK (Clase Falsa Temporal):
- * Representa una factura de venta histórica. El Dev 2 reemplazará esto
- * por la clase real cuando la base de datos esté lista.
- */
-class Factura {
-    private String numFactura;
-    private String fechaHora;
-    private double totalFactura;
-
-    public Factura(String numFactura, String fechaHora, double totalFactura) {
-        this.numFactura = numFactura;
-        this.fechaHora = fechaHora;
-        this.totalFactura = totalFactura;
-    }
-
-    // Getters corregidos para que coincidan lógicamente con las variables
-    public String getNumFactura() { return numFactura; }
-    public String getFechaHora() { return fechaHora; }
-    public double getTotalFactura() { return totalFactura; }
-}
+import com.example.model.detalleVenta;
 
 public class ReportesController {
 
-    /* ── Filtros ── */
+    // Filtros
     @FXML private DatePicker fechaDesde;
     @FXML private DatePicker fechaHasta;
     @FXML private Button btnGenerarReporte;
 
-    /* ── Tabla ── */
-    @FXML private TableView<Factura> tablaReportes;
-    @FXML private TableColumn<Factura, String> colNumFactura;
-    @FXML private TableColumn<Factura, String> colFechaHora;
-    @FXML private TableColumn<Factura, Double> colTotalFactura;
+    //Tabla
+    @FXML private TableView<detalleVenta> tablaReportes;
+    @FXML private TableColumn<detalleVenta, String> colNumFactura;
+    @FXML private TableColumn<detalleVenta, String> colFechaHora;
+    @FXML private TableColumn<detalleVenta, Double> colTotalFactura;
 
-    /* ── Resumen ── */
+    //Resumen
     @FXML private Label labelTotalPeriodo;
     @FXML private Label labelCantidadFacturas;
     @FXML private Label labelPromedio;
 
-    private final ObservableList<Factura> listaFacturas = FXCollections.observableArrayList();
+    private final ObservableList<detalleVenta> listaFacturas = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        colNumFactura.setCellValueFactory(new PropertyValueFactory<>("numFactura"));
-        colFechaHora.setCellValueFactory(new PropertyValueFactory<>("fechaHora"));
-        colTotalFactura.setCellValueFactory(new PropertyValueFactory<>("totalFactura"));
+        colNumFactura.setCellValueFactory(new PropertyValueFactory<>("idVenta")); 
+        colFechaHora.setCellValueFactory(new PropertyValueFactory<>("idProducto")); 
+        colTotalFactura.setCellValueFactory(new PropertyValueFactory<>("subTotal"));
 
         tablaReportes.setItems(listaFacturas);
 
-        // Fechas por defecto: del primer día del mes actual al día de hoy
+        //Fechas por defecto: del primer día del mes actual al día de hoy
         fechaDesde.setValue(LocalDate.now().withDayOfMonth(1));
         fechaHasta.setValue(LocalDate.now());
 
@@ -77,19 +57,11 @@ public class ReportesController {
             return;
         }
 
-        // SIMULACIÓN: la tabla tiene datos falsos de prueba al dar clic.
-        // El Dev 2 borrará esto y hará el "SELECT" en Oracle.
-        listaFacturas.setAll(
-            new Factura("FAC-0001", "2026-04-01 09:14", 45000.0),
-            new Factura("FAC-0002", "2026-04-03 11:32", 78500.0),
-            new Factura("FAC-0003", "2026-04-10 16:05", 23000.0)
-        );
-
         actualizarResumen();
     }
 
     private void actualizarResumen() {
-        double total = listaFacturas.stream().mapToDouble(Factura::getTotalFactura).sum();
+        double total = listaFacturas.stream().mapToDouble(detalleVenta::getSubTotal).sum();
         int cantidad = listaFacturas.size();
         double promedio = cantidad > 0 ? total / cantidad : 0.0;
 
