@@ -1,10 +1,20 @@
 package com.example.controller;
+import java.util.ArrayList;
 import java.util.Optional;
 import com.example.model.producto;
 import com.example.dao.ProductoDAO;
 import com.example.model.venta;
+
+import java.io.File;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import java.time.LocalDateTime;
-import java.util.Optional;
+
+import com.example.util.GeneradorPDF;
+import com.example.model.cliente;
+import com.example.model.detalleVenta;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -50,6 +60,7 @@ public class VentasController {
     @FXML private Label labelTotalUnidades;  
     @FXML private Button btnProcesarVenta;
     @FXML private Button btnCancelar;
+    @FXML private Button btnGenerarPDF;
 
     // La lista ahora maneja objetos ProductoVenta
     private final ObservableList<ProductoVenta> listaVenta = FXCollections.observableArrayList();
@@ -68,6 +79,14 @@ public class VentasController {
         btnAgregar.setOnAction(e -> agregarProducto());
         btnProcesarVenta.setOnAction(e -> procesarVenta());
         btnCancelar.setOnAction(e -> cancelarVenta());
+
+        tablaVentas.setItems(listaVenta);
+
+        btnAgregar.setOnAction(e -> agregarProducto());
+        btnProcesarVenta.setOnAction(e -> procesarVenta());
+        btnCancelar.setOnAction(e -> cancelarVenta());
+        
+        btnGenerarPDF.setOnAction(e -> generarFacturaPDF());
     }
 
     private void agregarProducto() {
@@ -145,6 +164,47 @@ public class VentasController {
         listaVenta.clear();
         actualizarResumen();
         campoBusqueda.clear();
+    }
+
+    private void generarFacturaPDF() {
+        if (listaVenta.isEmpty()) {
+            mostrarAlerta("Error", "No hay productos en el carrito para generar una factura.");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar Factura PDF");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
+        
+        String nombreSugerido = "Factura_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm")) + ".pdf";
+        fileChooser.setInitialFileName(nombreSugerido);
+        
+        Stage stage = (Stage) btnGenerarPDF.getScene().getWindow();
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file != null) {
+            
+            double totalFactura = listaVenta.stream().mapToDouble(ProductoVenta::getSubtotal).sum();
+            venta nuevaVenta = new venta(1001, LocalDateTime.now(), totalFactura, "Efectivo", 1);
+            
+            cliente cliFinal = new cliente(1, "222222222222", "Consumidor Final", "N/A");
+            cliFinal.setNombre("Consumidor Final");
+            cliFinal.setCedula("222222222222");
+            cliFinal.setTelefono("N/A");
+
+            List<detalleVenta> detallesPDF = new ArrayList<>();
+            int idSimulado = 1; 
+            
+            for (ProductoVenta pv : listaVenta) {
+                detalleVenta det = new detalleVenta(0, 1001, idSimulado, pv.getCantidad(), pv.getPrecioUnitario(), pv.getSubtotal());
+                detallesPDF.add(det);
+                idSimulado++;
+            }
+
+            GeneradorPDF.generarFactura(nuevaVenta, cliFinal, detallesPDF, file.getAbsolutePath());
+
+            mostrarAlerta("PDF Generado", "La factura se ha guardado correctamente en:\n" + file.getAbsolutePath());
+        }
     }
 
     private void mostrarAlerta(String titulo, String mensaje) {
