@@ -3,6 +3,7 @@ package com.example.controller;
 import java.io.IOException;
 import java.util.List;
 
+import com.example.dao.ProductoDAO;
 import com.example.dao.categoriaDAO;
 import com.example.dao.laboratorioDAO;
 import com.example.model.categoria;
@@ -38,8 +39,8 @@ public class InventarioController {
     @FXML private TableView<producto>            tablaInventario;
     @FXML private TableColumn<producto, Integer> colId;
     @FXML private TableColumn<producto, String>  colNombre;
-    @FXML private TableColumn<producto, Integer>  colCategoria;
-    @FXML private TableColumn<producto, Integer>  colLaboratorio;
+    @FXML private TableColumn<producto, Integer> colCategoria;
+    @FXML private TableColumn<producto, Integer> colLaboratorio;
     @FXML private TableColumn<producto, Integer> colStock;
     @FXML private TableColumn<producto, Double>  colPrecio;
     @FXML private TableColumn<producto, String>  colVencimiento;
@@ -51,9 +52,10 @@ public class InventarioController {
     @FXML private Button btnAbrirGestionCategorias;
     @FXML private Button btnAbrirGestionLaboratorios;
 
-    //DAOs para cargar los ComboBox desde la base de datos
+    //DAOs Oficiales
     private final categoriaDAO   catDAO = new categoriaDAO();
     private final laboratorioDAO labDAO = new laboratorioDAO();
+    private final ProductoDAO    prodDAO = new ProductoDAO(); 
 
     private final ObservableList<producto> listaProductos = FXCollections.observableArrayList();
     private FilteredList<producto> listaFiltrada;
@@ -73,9 +75,14 @@ public class InventarioController {
         listaFiltrada = new FilteredList<>(listaProductos, p -> true);
         tablaInventario.setItems(listaFiltrada);
 
-        //ComboBox desde la base de datos
-        cargarComboCategoria();
-        cargarComboLaboratorio();
+        // PROTECCIÓN CONTRA CAÍDAS DE BASE DE DATOS
+        try {
+            cargarComboCategoria();
+            cargarComboLaboratorio();
+            cargarProductosBD(); 
+        } catch (Exception e) {
+            System.err.println("Error crítico de BD al abrir Inventario: " + e.getMessage());
+        }
 
         //Listeners de filtros
         campoBusqueda.textProperty().addListener((obs, old, nuevo) -> aplicarFiltros());
@@ -93,10 +100,19 @@ public class InventarioController {
             abrirVentanaGestion("GestionLaboratorios.fxml", "Gestionar Laboratorios"));
     }
 
-    //Carga de ComboBox desde la base de datos
+    //Metodos de Carga de Datos Reales
+
+    private void cargarProductosBD() {
+        List<producto> productosBD = prodDAO.listarTodos();
+        if (productosBD != null) {
+            listaProductos.setAll(productosBD);
+        }
+    }
 
     private void cargarComboCategoria() {
         List<categoria> categorias = catDAO.listarTodos();
+        if (categorias == null) return; 
+        
         ObservableList<String> nombres = FXCollections.observableArrayList();
         for (categoria cat : categorias) {
             nombres.add(cat.getNombre());
@@ -106,6 +122,8 @@ public class InventarioController {
 
     private void cargarComboLaboratorio() {
         List<laboratorio> laboratorios = labDAO.listarTodos();
+        if (laboratorios == null) return;
+        
         ObservableList<String> nombres = FXCollections.observableArrayList();
         for (laboratorio lab : laboratorios) {
             nombres.add(lab.getNombre());
@@ -113,11 +131,9 @@ public class InventarioController {
         comboLaboratorio.setItems(nombres);
     }
 
-    //filtros
 
     private void aplicarFiltros() {
         String texto = campoBusqueda.getText().toLowerCase().trim();
-
         listaFiltrada.setPredicate(p -> {
             return texto.isEmpty() || p.getNombre().toLowerCase().contains(texto);
         });
@@ -129,47 +145,47 @@ public class InventarioController {
         comboLaboratorio.setValue(null);
     }
 
-    //Acciones de productos
-
     private void anadirProducto() {
-        mostrarAlerta("Añadir", "Aqui abriras el formulario de nuevo producto.");
+        abrirVentanaGestion("GestionProducto.fxml", "Añadir Nuevo Producto");
     }
 
     private void editarProducto() {
-        mostrarAlerta("Editar", "Abre formulario para editar.");
+        producto seleccionado = tablaInventario.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            mostrarAlerta("Atención", "Por favor, selecciona un producto de la tabla para poder editarlo.");
+            return;
+        }
+        abrirVentanaGestion("GestionProducto.fxml", "Editar Producto: " + seleccionado.getNombre());
     }
 
     private void eliminarProducto() {
         producto seleccionado = tablaInventario.getSelectionModel().getSelectedItem();
         if (seleccionado != null) {
             listaProductos.remove(seleccionado);
+            // NOTA: El Dev 2 deberá añadir aquí la lógica para borrar en Oracle:
+            // prodDAO.eliminar(seleccionado.getIdProducto());
         }
     }
 
-    //Ventanas de gestion
-
     private void abrirVentanaGestion(String fxmlFile, String titulo) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/com/example/view/" + fxmlFile));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/view/" + fxmlFile));
             Parent root = loader.load();
-
             Stage stage = new Stage();
             stage.setTitle(titulo);
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
 
-            // recarga combos al cerrar la ventana de gestion
+            // Refrescar todo al cerrar la ventana
             cargarComboCategoria();
             cargarComboLaboratorio();
+            cargarProductosBD(); 
 
         } catch (IOException e) {
             System.err.println("Error al abrir " + fxmlFile + ": " + e.getMessage());
         }
     }
-
-    //Alertas
 
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
