@@ -1,11 +1,18 @@
 package com.example.controller;
 
+import java.io.IOException;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
  * MOCK (Clase Falsa Temporal): 
@@ -63,6 +70,8 @@ public class InventarioController {
     @FXML private Button btnAnadir;
     @FXML private Button btnEditar;
     @FXML private Button btnEliminar;
+    @FXML private Button btnAbrirGestionCategorias;
+    @FXML private Button btnAbrirGestionLaboratorios;
 
     private final ObservableList<Producto> listaProductos = FXCollections.observableArrayList();
     private FilteredList<Producto> listaFiltrada;
@@ -77,6 +86,8 @@ public class InventarioController {
         colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
         colVencimiento.setCellValueFactory(new PropertyValueFactory<>("vencimiento"));
+        btnAbrirGestionCategorias.setOnAction(e -> abrirVentanaGestion("GestionCategorias.fxml", "Gestionar Categorías"));
+        btnAbrirGestionLaboratorios.setOnAction(e -> abrirVentanaGestion("GEstionLaboratorios.fxml", "Gestionar Laboratorios"));
 
         // MOCKS: Datos de ejemplo para que la tabla se vea llena
         listaProductos.addAll(
@@ -135,4 +146,25 @@ public class InventarioController {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+
+    @FXML
+private void abrirVentanaGestion(String fxmlFile, String titulo) {
+    try {
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/view/" + fxmlFile));
+        Parent root = loader.load();
+
+        Stage stage = new Stage();
+        stage.setTitle(titulo);
+        stage.setScene(new Scene(root));
+
+        stage.initModality(Modality.APPLICATION_MODAL);
+        
+        stage.showAndWait();
+
+    } catch (IOException e) {
+        System.out.println("Error al abrir la ventana " + fxmlFile);
+        e.printStackTrace();
+    }
+}
 }
