@@ -1,4 +1,10 @@
 package com.example.controller;
+import java.util.Optional;
+import com.example.model.producto;
+import com.example.dao.ProductoDAO;
+import com.example.model.venta;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -6,10 +12,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-/**
- * MOCK (Clase Falsa Temporal): 
- * Representa un producto que ya fue agregado al "carrito" de compras.
- */
 class ProductoVenta {
     private String nombre;
     private int cantidad;
@@ -23,7 +25,6 @@ class ProductoVenta {
         this.subtotal = cantidad * precioUnitario;
     }
 
-    // Getters necesarios para que el TableView funcione
     public String getNombre() { return nombre; }
     public int getCantidad() { return cantidad; }
     public double getPrecioUnitario() { return precioUnitario; }
@@ -32,26 +33,27 @@ class ProductoVenta {
 
 public class VentasController {
 
-    /* ── Buscador ── */
+    //Buscador
     @FXML private TextField campoBusqueda;
     @FXML private Button btnAgregar;
 
-    /* ── Tabla ── */
+    //Tabla
     @FXML private TableView<ProductoVenta> tablaVentas;
     @FXML private TableColumn<ProductoVenta, String> colProducto;
     @FXML private TableColumn<ProductoVenta, Integer> colCantidad;
     @FXML private TableColumn<ProductoVenta, Double> colPrecioUnitario;
     @FXML private TableColumn<ProductoVenta, Double> colSubtotal;
 
-    /* ── Resumen ── */
+    //Resumen
     @FXML private Label labelTotal;
     @FXML private Label labelCantidadProductos; 
     @FXML private Label labelTotalUnidades;  
     @FXML private Button btnProcesarVenta;
     @FXML private Button btnCancelar;
 
-    // Esta es la lista que alimenta la tabla en tiempo real
+    // La lista ahora maneja objetos ProductoVenta
     private final ObservableList<ProductoVenta> listaVenta = FXCollections.observableArrayList();
+    private final ProductoDAO productoDAO = new ProductoDAO();
 
     @FXML
     public void initialize() {
@@ -61,7 +63,6 @@ public class VentasController {
         colPrecioUnitario.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
         colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
 
-        // Conectar la lista a la tabla
         tablaVentas.setItems(listaVenta);
 
         btnAgregar.setOnAction(e -> agregarProducto());
@@ -73,21 +74,52 @@ public class VentasController {
         String busqueda = campoBusqueda.getText().trim();
         if (busqueda.isEmpty()) return;
 
-        // SIMULACIÓN: No importa qué escribas, agregará esto por ahora.
-        // El Dev 2 cambiará esto para buscar en la BD real.
-        ProductoVenta producto = new ProductoVenta(busqueda, 1, 15000.0);
-        listaVenta.add(producto);
+        java.util.List<producto> resultados = productoDAO.buscarPorNombre(busqueda);
+
+        if (resultados == null || resultados.isEmpty()) {
+            mostrarAlerta("No encontrado", "No se encontró el producto en el inventario.");
+            return;
+        }
+
+        producto productoReal = resultados.get(0);
+
+        TextInputDialog dialog = new TextInputDialog("1"); 
+        dialog.setTitle("Cantidad a vender");
+        dialog.setHeaderText("Producto: " + productoReal.getNombre() + "\nPrecio: $" + productoReal.getPrecio());
+        dialog.setContentText("¿Cuántas unidades desea agregar?");
+
+        Optional<String> resultado = dialog.showAndWait();
         
-        campoBusqueda.clear();
-        actualizarResumen();
+        if (resultado.isPresent()) {
+            try {
+                int cantidadPedida = Integer.parseInt(resultado.get());
+
+                if (cantidadPedida > productoReal.getStock()) {
+                    mostrarAlerta("Stock insuficiente", "Solo hay " + productoReal.getStock() + " unidades en bodega.");
+                    return;
+                }
+
+                if (cantidadPedida > 0) {
+                    ProductoVenta nuevoProducto = new ProductoVenta(
+                            productoReal.getNombre(), 
+                            cantidadPedida, 
+                            productoReal.getPrecio()
+                    );
+                    
+                    listaVenta.add(nuevoProducto);
+                    campoBusqueda.clear();
+                    actualizarResumen();
+                }
+            } catch (NumberFormatException ex) {
+                mostrarAlerta("Error", "Por favor, ingrese un número válido.");
+            }
+        }
     }
 
     private void actualizarResumen() {
         double total = listaVenta.stream().mapToDouble(ProductoVenta::getSubtotal).sum();
-        // Formatea el texto para que se vea como dinero
         labelTotal.setText(String.format("TOTAL: $%,.2f", total));
         
-        // Si no tienes estos labels en tu SceneBuilder, puedes borrar estas dos líneas
         if(labelCantidadProductos != null) labelCantidadProductos.setText(String.valueOf(listaVenta.size()));
         if(labelTotalUnidades != null) {
             int unidades = listaVenta.stream().mapToInt(ProductoVenta::getCantidad).sum();
@@ -101,8 +133,11 @@ public class VentasController {
             return;
         }
         
-        // Aquí el Dev 2 hará el INSERT a la base de datos de Oracle
-        mostrarAlerta("Venta Exitosa", "La venta ha sido procesada y registrada en el sistema.");
+        double totalFactura = listaVenta.stream().mapToDouble(ProductoVenta::getSubtotal).sum();
+        
+        venta nuevaVenta = new venta(0, LocalDateTime.now(), totalFactura, "Efectivo", 1);
+
+        mostrarAlerta("Venta Exitosa", "Factura registrada por un total de: $" + nuevaVenta.getTotal());
         cancelarVenta();
     }
 

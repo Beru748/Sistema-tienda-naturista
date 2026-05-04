@@ -1,6 +1,13 @@
 package com.example.controller;
 
 import java.io.IOException;
+import java.util.List;
+
+import com.example.dao.categoriaDAO;
+import com.example.dao.laboratorioDAO;
+import com.example.model.categoria;
+import com.example.model.laboratorio;
+import com.example.model.producto;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,119 +16,110 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-/**
- * MOCK (Clase Falsa Temporal): 
- * Cuando el Dev 1 termine su clase Producto oficial en la carpeta "model", 
- * el Dev 2 solo tendrá que borrar esto de aquí e importar la verdadera.
- */
-class Producto {
-    private int id;
-    private String nombre;
-    private String categoria;
-    private String laboratorio;
-    private int stock;
-    private double precio;
-    private String vencimiento;
-
-    public Producto(int id, String nombre, String categoria, String laboratorio, int stock, double precio, String vencimiento) {
-        this.id = id;
-        this.nombre = nombre;
-        this.categoria = categoria;
-        this.laboratorio = laboratorio;
-        this.stock = stock;
-        this.precio = precio;
-        this.vencimiento = vencimiento;
-    }
-
-    // Getters obligatorios para que el TableView pueda leer la información
-    public int getId() { return id; }
-    public String getNombre() { return nombre; }
-    public String getCategoria() { return categoria; }
-    public String getLaboratorio() { return laboratorio; }
-    public int getStock() { return stock; }
-    public double getPrecio() { return precio; }
-    public String getVencimiento() { return vencimiento; }
-}
-
 public class InventarioController {
 
-    /* ── Filtros ── */
-    @FXML private TextField            campoBusqueda;
-    @FXML private ComboBox<String>     comboCategoria;
-    @FXML private ComboBox<String>     comboLaboratorio;
-    @FXML private Button               btnLimpiarFiltros;
+    //Filtros
+    @FXML private TextField        campoBusqueda;
+    @FXML private ComboBox<String> comboCategoria;
+    @FXML private ComboBox<String> comboLaboratorio;
+    @FXML private Button           btnLimpiarFiltros;
 
-    /* ── Tabla ── */
-    @FXML private TableView<Producto>              tablaInventario;
-    @FXML private TableColumn<Producto, Integer>   colId;
-    @FXML private TableColumn<Producto, String>    colNombre;
-    @FXML private TableColumn<Producto, String>    colCategoria;
-    @FXML private TableColumn<Producto, String>    colLaboratorio;
-    @FXML private TableColumn<Producto, Integer>   colStock;
-    @FXML private TableColumn<Producto, Double>    colPrecio;
-    @FXML private TableColumn<Producto, String>    colVencimiento;
+    //Tabla
+    @FXML private TableView<producto>            tablaInventario;
+    @FXML private TableColumn<producto, Integer> colId;
+    @FXML private TableColumn<producto, String>  colNombre;
+    @FXML private TableColumn<producto, Integer>  colCategoria;
+    @FXML private TableColumn<producto, Integer>  colLaboratorio;
+    @FXML private TableColumn<producto, Integer> colStock;
+    @FXML private TableColumn<producto, Double>  colPrecio;
+    @FXML private TableColumn<producto, String>  colVencimiento;
 
-    /* ── Acciones ── */
+    //Acciones
     @FXML private Button btnAnadir;
     @FXML private Button btnEditar;
     @FXML private Button btnEliminar;
     @FXML private Button btnAbrirGestionCategorias;
     @FXML private Button btnAbrirGestionLaboratorios;
 
-    private final ObservableList<Producto> listaProductos = FXCollections.observableArrayList();
-    private FilteredList<Producto> listaFiltrada;
+    //DAOs para cargar los ComboBox desde la base de datos
+    private final categoriaDAO   catDAO = new categoriaDAO();
+    private final laboratorioDAO labDAO = new laboratorioDAO();
+
+    private final ObservableList<producto> listaProductos = FXCollections.observableArrayList();
+    private FilteredList<producto> listaFiltrada;
 
     @FXML
     public void initialize() {
-        // Enlaze de las columnas
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        //Mapeo de columnas
+        colId.setCellValueFactory(new PropertyValueFactory<>("idProducto"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        colCategoria.setCellValueFactory(new PropertyValueFactory<>("categoria"));
-        colLaboratorio.setCellValueFactory(new PropertyValueFactory<>("laboratorio"));
+        colCategoria.setCellValueFactory(new PropertyValueFactory<>("idCategoria"));
+        colLaboratorio.setCellValueFactory(new PropertyValueFactory<>("idLaboratorio"));
         colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
-        colVencimiento.setCellValueFactory(new PropertyValueFactory<>("vencimiento"));
-        btnAbrirGestionCategorias.setOnAction(e -> abrirVentanaGestion("GestionCategorias.fxml", "Gestionar Categorías"));
-        btnAbrirGestionLaboratorios.setOnAction(e -> abrirVentanaGestion("GEstionLaboratorios.fxml", "Gestionar Laboratorios"));
-
-        // MOCKS: Datos de ejemplo para que la tabla se vea llena
-        listaProductos.addAll(
-            new Producto(1, "Spirulina 500mg",  "Suplementos", "NaturLab",  48, 32000.0, "2026-12-01"),
-            new Producto(2, "Aceite de Coco",   "Aceites",     "BioNatural", 15, 28500.0, "2027-03-15"),
-            new Producto(3, "Jengibre en polvo","Especias",    "HerbaCol",   30, 12000.0, "2026-08-20")
-        );
+        colVencimiento.setCellValueFactory(new PropertyValueFactory<>("fechaVencimiento"));
 
         listaFiltrada = new FilteredList<>(listaProductos, p -> true);
         tablaInventario.setItems(listaFiltrada);
 
-        comboCategoria.setItems(FXCollections.observableArrayList("Suplementos", "Aceites", "Especias", "Tés", "Cosméticos"));
-        comboLaboratorio.setItems(FXCollections.observableArrayList("NaturLab", "BioNatural", "HerbaCol", "VidaSana"));
+        //ComboBox desde la base de datos
+        cargarComboCategoria();
+        cargarComboLaboratorio();
 
+        //Listeners de filtros
         campoBusqueda.textProperty().addListener((obs, old, nuevo) -> aplicarFiltros());
         comboCategoria.valueProperty().addListener((obs, old, nuevo) -> aplicarFiltros());
         comboLaboratorio.valueProperty().addListener((obs, old, nuevo) -> aplicarFiltros());
 
+        //Botones
         btnLimpiarFiltros.setOnAction(e -> limpiarFiltros());
-        btnAnadir.setOnAction(e   -> anadirProducto());
-        btnEditar.setOnAction(e   -> editarProducto());
+        btnAnadir.setOnAction(e -> anadirProducto());
+        btnEditar.setOnAction(e -> editarProducto());
         btnEliminar.setOnAction(e -> eliminarProducto());
+        btnAbrirGestionCategorias.setOnAction(e ->
+            abrirVentanaGestion("GestionCategorias.fxml", "Gestionar Categorias"));
+        btnAbrirGestionLaboratorios.setOnAction(e ->
+            abrirVentanaGestion("GestionLaboratorios.fxml", "Gestionar Laboratorios"));
     }
+
+    //Carga de ComboBox desde la base de datos
+
+    private void cargarComboCategoria() {
+        List<categoria> categorias = catDAO.listarTodos();
+        ObservableList<String> nombres = FXCollections.observableArrayList();
+        for (categoria cat : categorias) {
+            nombres.add(cat.getNombre());
+        }
+        comboCategoria.setItems(nombres);
+    }
+
+    private void cargarComboLaboratorio() {
+        List<laboratorio> laboratorios = labDAO.listarTodos();
+        ObservableList<String> nombres = FXCollections.observableArrayList();
+        for (laboratorio lab : laboratorios) {
+            nombres.add(lab.getNombre());
+        }
+        comboLaboratorio.setItems(nombres);
+    }
+
+    //filtros
 
     private void aplicarFiltros() {
         String texto = campoBusqueda.getText().toLowerCase().trim();
-        String cat   = comboCategoria.getValue();
-        String lab   = comboLaboratorio.getValue();
 
         listaFiltrada.setPredicate(p -> {
-            boolean coincideTexto = texto.isEmpty() || p.getNombre().toLowerCase().contains(texto);
-            boolean coincideCat  = cat == null || p.getCategoria().equals(cat);
-            boolean coincideLab  = lab == null || p.getLaboratorio().equals(lab);
-            return coincideTexto && coincideCat && coincideLab;
+            return texto.isEmpty() || p.getNombre().toLowerCase().contains(texto);
         });
     }
 
@@ -131,13 +129,47 @@ public class InventarioController {
         comboLaboratorio.setValue(null);
     }
 
-    private void anadirProducto() { mostrarAlerta("Añadir", "Aquí abrirás el formulario de nuevo producto."); }
-    private void editarProducto() { mostrarAlerta("Editar", "Abre formulario para editar."); }
-    
-    private void eliminarProducto() {
-        Producto seleccionado = tablaInventario.getSelectionModel().getSelectedItem();
-        if (seleccionado != null) listaProductos.remove(seleccionado);
+    //Acciones de productos
+
+    private void anadirProducto() {
+        mostrarAlerta("Añadir", "Aqui abriras el formulario de nuevo producto.");
     }
+
+    private void editarProducto() {
+        mostrarAlerta("Editar", "Abre formulario para editar.");
+    }
+
+    private void eliminarProducto() {
+        producto seleccionado = tablaInventario.getSelectionModel().getSelectedItem();
+        if (seleccionado != null) {
+            listaProductos.remove(seleccionado);
+        }
+    }
+
+    //Ventanas de gestion
+
+    private void abrirVentanaGestion(String fxmlFile, String titulo) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/com/example/view/" + fxmlFile));
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle(titulo);
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            // recarga combos al cerrar la ventana de gestion
+            cargarComboCategoria();
+            cargarComboLaboratorio();
+
+        } catch (IOException e) {
+            System.err.println("Error al abrir " + fxmlFile + ": " + e.getMessage());
+        }
+    }
+
+    //Alertas
 
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -146,25 +178,4 @@ public class InventarioController {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
-
-    @FXML
-private void abrirVentanaGestion(String fxmlFile, String titulo) {
-    try {
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/view/" + fxmlFile));
-        Parent root = loader.load();
-
-        Stage stage = new Stage();
-        stage.setTitle(titulo);
-        stage.setScene(new Scene(root));
-
-        stage.initModality(Modality.APPLICATION_MODAL);
-        
-        stage.showAndWait();
-
-    } catch (IOException e) {
-        System.out.println("Error al abrir la ventana " + fxmlFile);
-        e.printStackTrace();
-    }
-}
 }
