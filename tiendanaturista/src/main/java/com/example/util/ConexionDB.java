@@ -1,57 +1,94 @@
 package com.example.util;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
+/**
+ * ConexionDB — Conexion a Oracle usando archivo de configuracion externo.
+ *
+ * Cada desarrollador tiene su propio archivo db.properties en
+ * src/main/resources con su IP, usuario y contrasena.
+ * El codigo Java no cambia — solo cambia el archivo de configuracion.
+ *
+ * Desarrolladores:
+ *  - Camilo → localhost
+ *  - Erik   → 192.168.1.5 (IP de Camilo)
+ *  - Felix  → 192.168.1.5 (IP de Camilo)
+ * Todos usan usuario tnaturista / camilo123
+ */
 public class ConexionDB {
 
-    // 1. Definir las credenciales y la URL de la base de datos
-    // Cambia "localhost" si tu BD está en otro servidor.
-    // "1521" es el puerto por defecto de Oracle.
-    // "xe" o "ORCL" es el SID o nombre del servicio (cámbialo según tu configuración).
-    private static final String URL = "jdbc:oracle:thin:@localhost:1521/XEPDB1";
-    private static final String USUARIO = "tnaturista";
-    private static final String CONTRASENA = "camilo123";
+    //Son los datos leidos del archivo db.properties
+    //private solo usa esta clase, static porque pertenecen a la clas y no a una instancia
+    private static String url;
+    private static String usuario;
+    private static String contrasena;
 
-    // Variable para almacenar la conexión
+    
     private static Connection conexion = null;
 
-    // Constructor privado para evitar que se instancie la clase
-    private ConexionDB() {
-    }
+     //bloque que se ejecuta una sola vez cuando la clase se carga en memoria
+    static {
+        try (InputStream input = ConexionDB.class
+                .getClassLoader()
+                .getResourceAsStream("db.properties")) {
 
-    // Método estático para obtener la conexión
+            if (input == null) {
+                System.err.println("No se encontro db.properties en resources.");
+                System.err.println("Crea el archivo en src/main/resources/db.properties");
+            } else {
+                
+                Properties props = new Properties();
+                props.load(input);
+
+                // extrae cada valor por su clave exacta
+                url        = props.getProperty("db.url");
+                usuario    = props.getProperty("db.usuario");
+                contrasena = props.getProperty("db.contrasena");
+
+                System.out.println("Configuracion de BD cargada correctamente.");
+                System.out.println("Conectando a: " + url);
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error al leer db.properties: " + e.getMessage());
+        }
+    }
+  
+    private ConexionDB() {}
+
+    //crea la conexion con los datos del archivo y devuelve la misma conexion ya creada
     public static Connection obtenerConexion() {
         if (conexion == null) {
             try {
-                // 2. Registrar el Driver (Opcional en versiones recientes de JDBC, pero buena práctica)
+                
                 Class.forName("oracle.jdbc.OracleDriver");
 
-                // 3. Establecer la conexión
-                conexion = DriverManager.getConnection(URL, USUARIO, CONTRASENA);
-                System.out.println("¡Conexion exitosa a la base de datos Tienda naturista!");
+                conexion = DriverManager.getConnection(url, usuario, contrasena);
+                System.out.println("Conexion exitosa a la base de datos Tienda naturista!");
 
             } catch (ClassNotFoundException e) {
-                System.err.println("Error: No se encontró el driver de Oracle. Verifica que el ojdbc.jar esté en el proyecto.");
-                e.printStackTrace();
+                System.err.println("Driver de Oracle no encontrado: " + e.getMessage());
             } catch (SQLException e) {
-                System.err.println("Error de conexión a la base de datos. Verifica tus credenciales y URL.");
-                e.printStackTrace();
+                System.err.println("Error de conexion: " + e.getMessage());
             }
         }
         return conexion;
     }
 
-    // Método para cerrar la conexión cuando ya no se necesite
+    //se llama al cerrar la aplicacion
     public static void cerrarConexion() {
         if (conexion != null) {
             try {
                 conexion.close();
                 conexion = null;
-                System.out.println("Conexión cerrada.");
+                System.out.println("Conexion cerrada correctamente.");
             } catch (SQLException e) {
-                System.err.println("Error al cerrar la conexión.");
-                e.printStackTrace();
+                System.err.println("Error al cerrar la conexion: " + e.getMessage());
             }
         }
     }
