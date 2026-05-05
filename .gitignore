@@ -41,3 +41,7 @@ dist/
 .DS_Store
 Thumbs.db
 .github/
+
+#Archivo de configuracion local BD
+db.properties
+*.properties

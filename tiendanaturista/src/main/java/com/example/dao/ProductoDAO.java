@@ -90,7 +90,7 @@ public class ProductoDAO {
 
     //busca un producto por su ID
     public producto buscarPorId(int id){
-        String sql = "SELECT * FROM WHERE id_producto = ?";
+        String sql = "SELECT * FROM producto WHERE id_producto = ?";
         try(PreparedStatement ps = con.prepareStatement(sql)){
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
